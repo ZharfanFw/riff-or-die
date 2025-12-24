@@ -64,17 +64,18 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     public void run() {
         long lastFrameTime = System.currentTimeMillis();
 
-        while (isRunning && !presenter.isGameOver()) {
+        while (isRunning) {
             long currentTime = System.currentTimeMillis();
-            long deltaTime = currentTime - lastFrameTime;
+            long deltaTimeMs = currentTime - lastFrameTime;
+            double deltaTime = deltaTimeMs / 1000.0;
 
             // Update game state melalui presenter
-            presenter.update();
+            presenter.update(deltaTime);
 
             repaint();
 
             try {
-                long sleepTime = GameConstants.FRAME_TIME - deltaTime;
+                long sleepTime = GameConstants.FRAME_TIME - deltaTimeMs;
                 if (sleepTime > 0) {
                     Thread.sleep(sleepTime);
                 }
@@ -86,10 +87,8 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
             lastFrameTime = currentTime;
         }
 
-        // Game over
-        if (isRunning) {
-            onGameOver();
-        }
+        // Game loop thread ends here
+        // Game over dialog already handled by showGameOverDialog() method
     }
 
     @Override
@@ -137,18 +136,6 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         if (monsters != null) {
             g2d.drawString("Enemies: " + monsters.size(), GameConstants.SCREEN_WIDTH - 150, 20);
         }
-    }
-
-    private void onGameOver() {
-        isRunning = false;
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Game Over!\nScore: " + score,
-                "Game Over",
-                JOptionPane.INFORMATION_MESSAGE);
-
-        gameFrame.backToMenu();
     }
 
     public void stopGame() {
@@ -207,8 +194,20 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     }
 
     @Override
-    public void showGameOver(int finalScore) {
-        // Handled by onGameOver()
+    public void showGameOverDialog(int finalScore) {
+        // Stop game loop
+        isRunning = false;
+        
+        // Show blocking JOptionPane dialog
+        JOptionPane.showMessageDialog(
+            this,
+            "Game Over!\n\nScore: " + finalScore,
+            "Game Over",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+        
+        // After user clicks OK, return to menu
+        gameFrame.backToMenu();
     }
 
     @Override

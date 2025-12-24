@@ -8,7 +8,9 @@ public class Bullet {
     private int width;
     private int height;
 
-    private int speed;
+    private double speed;
+    private double velocityX;
+    private double velocityY;
 
     private boolean isPlayerBullet;
 
@@ -18,6 +20,8 @@ public class Bullet {
         this.width = 5;
         this.height = 10;
         this.isPlayerBullet = isPlayerBullet;
+        this.velocityX = 0;
+        this.velocityY = 0;
 
         if (isPlayerBullet) {
             this.speed = GameConstants.PLAYER_BULLET_SPEED;
@@ -26,16 +30,24 @@ public class Bullet {
         }
     }
 
-    public void update() {
+    public void setVelocity(double vx, double vy) {
+        this.velocityX = vx;
+        this.velocityY = vy;
+    }
+
+    public void update(double deltaTime) {
         if (isPlayerBullet) {
-            y += speed;
+            y += (int)(speed * deltaTime);
         } else {
-            y -= speed;
+            // Monster bullet moves with velocity (smooth lerp towards player)
+            x += (int)(velocityX * speed * deltaTime);
+            y += (int)(velocityY * speed * deltaTime);
         }
     }
 
     public boolean isActive() {
-        return y > -height && y < GameConstants.SCREEN_HEIGHT + height;
+        return y > -height && y < GameConstants.SCREEN_HEIGHT + height &&
+               x > -width && x < GameConstants.SCREEN_WIDTH + width;
     }
 
     public boolean isPlayerBullet() {
@@ -58,7 +70,7 @@ public class Bullet {
         return height;
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 }

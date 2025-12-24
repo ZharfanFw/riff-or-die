@@ -48,9 +48,11 @@ public interface IGameView {
     void updateAmplifiers(List<Amplifier> amplifiers);
 
     /**
-     * Show game over dialog
+     * Show game over dialog (blocking)
+     * Display score and wait for user to click OK
+     * After OK, return to menu
      */
-    void showGameOver(int finalScore);
+    void showGameOverDialog(int finalScore);
 
     /**
      * Repaint game canvas

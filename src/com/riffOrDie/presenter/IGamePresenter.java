@@ -28,7 +28,7 @@ public interface IGamePresenter {
     /**
      * Update game state (called every frame)
      */
-    void update();
+    void update(double deltaTime);
 
     /**
      * End game dan save score
@@ -44,4 +44,10 @@ public interface IGamePresenter {
      * Get current game score
      */
     int getScore();
+
+    /**
+     * Return to menu (called when SPACE pressed during game)
+     * Show game over dialog with score and save to database
+     */
+    void returnToMenu();
 }

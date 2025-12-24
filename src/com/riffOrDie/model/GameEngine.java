@@ -19,6 +19,7 @@ public class GameEngine {
 
     private long lastSpawnTime;
     private long spawnInterval;
+    private long lastUpdateTime;
     private Random random;
 
     public GameEngine(String username, int startingSisaPeluru) {
@@ -39,6 +40,7 @@ public class GameEngine {
         this.bulletsFired = 0;
         this.bulletsMissed = 0;
         this.lastSpawnTime = System.currentTimeMillis();
+        this.lastUpdateTime = System.currentTimeMillis();
         this.spawnInterval = GameConstants.BASE_SPAWN_RATE;
         this.random = new Random();
 
@@ -57,15 +59,15 @@ public class GameEngine {
 
     }
 
-    public void update() {
-        player.update();
+    public void update(double deltaTime) {
+        player.update(deltaTime);
 
         for (Monster monster : monsters) {
-            monster.update();
+            monster.update(deltaTime);
         }
 
         for (Bullet bullet : bullets) {
-            bullet.update();
+            bullet.update(deltaTime);
         }
 
         spawnMonsters();
@@ -98,7 +100,7 @@ public class GameEngine {
             int spawnCount = 1 + random.nextInt(2);
             for (int i = 0; i < spawnCount; i++) {
                 int x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.MONSTER_WIDTH);
-                int y = GameConstants.SCREEN_HEIGHT + GameConstants.MONSTER_HEIGHT;
+                int y = 300 + random.nextInt(300);
 
                 MonsterType type = random.nextDouble() < 0.7 ? MonsterType.EASY : MonsterType.HARD;
 
@@ -218,12 +220,35 @@ public class GameEngine {
         bulletsFired++;
     }
 
+
     public void updateMonsterShooting() {
         for (Monster monster : monsters) {
             if (monster.canShoot()) {
                 int centerX = monster.getCenterX();
                 int centerY = monster.getCenterY();
-                bullets.add(new Bullet(centerX, centerY, false));
+                
+                // Calculate direction from monster to player
+                int playerCenterX = player.getCenterX();
+                int playerCenterY = player.getCenterY();
+                
+                double dirX = playerCenterX - centerX;
+                double dirY = playerCenterY - centerY;
+                double distance = Math.sqrt(dirX * dirX + dirY * dirY);
+                
+                // Normalize direction (smooth lerp)
+                double velocityX = 0;
+                double velocityY = 0;
+                if (distance > 0) {
+                    velocityX = dirX / distance;
+                    velocityY = dirY / distance;
+                }
+                
+                // Create bullet and set velocity
+                Bullet bullet = new Bullet(centerX, centerY, false);
+                bullet.setVelocity(velocityX, velocityY);
+                bullets.add(bullet);
+                
+                monster.resetShootCooldown();
             }
         }
     }

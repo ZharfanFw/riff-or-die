@@ -42,9 +42,14 @@ public class InputHandler implements KeyListener {
             presenter.playerMove(directionX, directionY);
         }
 
-        // Shoot
-        if (keyCode == KeyEvent.VK_SPACE) {
+        // Shoot (Z key)
+        if (keyCode == KeyEvent.VK_Z) {
             presenter.playerShoot();
+        }
+
+        // Return to menu (SPACE key)
+        if (keyCode == KeyEvent.VK_SPACE) {
+            presenter.returnToMenu();
         }
     }
 

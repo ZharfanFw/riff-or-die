@@ -8,17 +8,17 @@ public class GameConstants {
     public static final long FRAME_TIME = 1000 / FPS; // ~16ms per frame
 
     // Player Setting
-    public static final int PLAYER_WIDTH = 29;
-    public static final int PLAYER_HEIGHT = 34;
+    public static final int PLAYER_WIDTH = 58;
+    public static final int PLAYER_HEIGHT = 68;
     public static final int PLAYER_HEALTH = 5;
-    public static final int PLAYER_SPEED = 5; // px per frame
-    public static final int PLAYER_BULLET_SPEED = 8;
+    public static final double PLAYER_SPEED = 180.0; // px per second
+    public static final double PLAYER_BULLET_SPEED = 240.0; // px per second
 
     // Monster Setting
     public static final int MONSTER_WIDTH = 50;
     public static final int MONSTER_HEIGHT = 50;
-    public static final int MONSTER_BULLET_SPEED = 4;
-    public static final long MONSTER_SHOOT_COOLDOWN = 1000; // milisecond
+    public static final double MONSTER_BULLET_SPEED = 150.0; // px per second
+    public static final long MONSTER_SHOOT_COOLDOWN = 2500; // 2.5 seconds // milisecond
 
     // Amplifier (Obstacle) Setting
     public static final int AMPLIFIER_WIDTH = 40;
@@ -27,7 +27,7 @@ public class GameConstants {
     public static final int AMPLIFIER_COUNT_MAX = 5;
 
     // Spawning Setting
-    public static final long BASE_SPAWN_RATE = 2000; // milisecond
+    public static final long BASE_SPAWN_RATE = 5000; // 4 seconds // milisecond
 
     // Database Setting
     public static final String DB_URL = "jdbc:mysql://localhost:3306/riffordie";
