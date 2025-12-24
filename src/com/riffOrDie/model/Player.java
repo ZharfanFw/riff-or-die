@@ -25,9 +25,9 @@ public class Player {
         this.velocityY = 0;
     }
 
-    public void update() {
-        x += velocityX * GameConstants.PLAYER_SPEED;
-        y += velocityY * GameConstants.PLAYER_SPEED;
+    public void update(double deltaTime) {
+        x += (int)(velocityX * GameConstants.PLAYER_SPEED * deltaTime);
+        y += (int)(velocityY * GameConstants.PLAYER_SPEED * deltaTime);
 
         if (x < 0) {
             x = 0;

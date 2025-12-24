@@ -56,8 +56,7 @@ public class GamePresenter implements IGamePresenter {
         }
         
         // Set player velocity based on direction
-        int speed = 5; // pixels per frame
-        gameEngine.getPlayer().setVelocity(directionX * speed, directionY * speed);
+        gameEngine.getPlayer().setVelocity(directionX, directionY);
     }
 
     /**
@@ -78,13 +77,13 @@ public class GamePresenter implements IGamePresenter {
      * Ini adalah method paling sering dipanggil
      */
     @Override
-    public void update() {
+    public void update(double deltaTime) {
         if (gameEngine == null || gameOver) {
             return;
         }
         
         // Update game engine (semua entities, collisions, scoring)
-        gameEngine.update();
+        gameEngine.update(deltaTime);
         
         // Update monster shooting logic
         gameEngine.updateMonsterShooting();
@@ -141,7 +140,10 @@ public class GamePresenter implements IGamePresenter {
             System.err.println("Error saving score: " + e.getMessage());
         }
         
-        view.showGameOver(gameEngine.getScore());
+        // Show game over dialog on EDT thread (safe from game thread)
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            view.showGameOverDialog(gameEngine.getScore());
+        });
     }
 
     /**
@@ -165,5 +167,34 @@ public class GamePresenter implements IGamePresenter {
      */
     public GameEngine getGameEngine() {
         return gameEngine;
+    }
+
+    /**
+     * Return to menu (called when SPACE pressed during game)
+     * Show game over dialog with score and switch to menu
+     */
+    @Override
+    public void returnToMenu() {
+        if (gameEngine == null) {
+            return;
+        }
+
+        // Save score before returning
+        GameScore gameScore = new GameScore();
+        gameScore.setUsername(username);
+        gameScore.setSkor(gameEngine.getScore());
+        gameScore.setPeluruMeleset(gameEngine.getBulletsMissed());
+        gameScore.setSisaPeluru(startingSisaPeluru);
+
+        // Save to database
+        try {
+            DatabaseManager.saveScore(gameScore);
+        } catch (Exception e) {
+            System.err.println("Error saving score: " + e.getMessage());
+        }
+
+        // Show game over dialog (blocking - user click OK before menu)
+        gameOver = true;
+        view.showGameOverDialog(gameEngine.getScore());
     }
 }

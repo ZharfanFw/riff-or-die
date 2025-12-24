@@ -27,8 +27,9 @@ public class Monster {
         this.lastShootTime = System.currentTimeMillis();
     }
 
-    public void update() {
-        y -= type.getSpeed();
+    public void update(double deltaTime) {
+        // Monster position is fixed at spawn, does not move
+        // Only bullets from monster move towards player
     }
 
     public void takeDamage(int damage) {
@@ -90,5 +91,8 @@ public class Monster {
 
     public int getCenterY() {
         return y;
+    }
+    public void resetShootCooldown() {
+        this.lastShootTime = System.currentTimeMillis();
     }
 }
