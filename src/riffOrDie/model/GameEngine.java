@@ -26,9 +26,9 @@ public class GameEngine {
     public GameEngine(String username, int startingSisaPeluru) {
         this.currentUsername = username;
 
-        // Initialize player di posisi tengah atas
+        // Initialize player di posisi center screen
         int playerStartX = GameConstants.SCREEN_WIDTH / 2 - GameConstants.PLAYER_WIDTH / 2;
-        int playerStartY = GameConstants.SCREEN_HEIGHT - 100;
+        int playerStartY = GameConstants.SCREEN_HEIGHT / 2 - GameConstants.PLAYER_HEIGHT / 2;
         this.player = new Player(playerStartX, playerStartY);
 
         // Initialize collections
@@ -62,7 +62,7 @@ public class GameEngine {
             // Find safe spawn position (not colliding with other amplifiers)
             while (!validPosition && retries < maxRetries) {
                 x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
-                y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
+                y = GameConstants.AMPLIFIER_SPAWN_Y_MIN + random.nextInt(GameConstants.AMPLIFIER_SPAWN_Y_MAX - GameConstants.AMPLIFIER_SPAWN_Y_MIN);
 
                 validPosition = !checkAmplifierSpawnCollision(x, y);
                 retries++;
@@ -103,7 +103,7 @@ public class GameEngine {
                 // Find safe spawn position (not colliding with other amplifiers)
                 while (!validPosition && retries < maxRetries) {
                     x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
-                    y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
+                    y = GameConstants.AMPLIFIER_SPAWN_Y_MIN + random.nextInt(GameConstants.AMPLIFIER_SPAWN_Y_MAX - GameConstants.AMPLIFIER_SPAWN_Y_MIN);
 
                     validPosition = !checkAmplifierSpawnCollision(x, y);
                     retries++;
