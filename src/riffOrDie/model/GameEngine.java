@@ -174,18 +174,21 @@ public class GameEngine {
                 int retries = 0;
                 int maxRetries = 10;
 
-                // Find safe spawn position (not colliding with amplifiers)
+                // Find safe spawn position (not colliding with amplifiers or other monsters)
                 while (!validPosition && retries < maxRetries) {
                     x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.MONSTER_WIDTH);
                     y = GameConstants.MONSTER_SPAWN_Y_MIN + random.nextInt(GameConstants.MONSTER_SPAWN_Y_MAX - GameConstants.MONSTER_SPAWN_Y_MIN);
 
-                    // Check if this position collides with any amplifier
+                    // Check if this position collides with any amplifier or other monster
                     validPosition = true;
                     for (Amplifier amp : amplifiers) {
                         if (checkMonsterSpawnCollision(x, y, amp)) {
                             validPosition = false;
                             break;
                         }
+                    }
+                    if (validPosition && checkMonsterMonsterCollision(x, y)) {
+                        validPosition = false;
                     }
 
                     retries++;
@@ -253,6 +256,22 @@ public class GameEngine {
                monsterX + GameConstants.MONSTER_WIDTH > amplifier.getX() &&
                monsterY < amplifier.getY() + amplifier.getHeight() &&
                monsterY + GameConstants.MONSTER_HEIGHT > amplifier.getY();
+    }
+
+    /**
+     * Check if spawn position (monster at x, y) collides with any existing monster
+     * Uses AABB collision detection
+     */
+    private boolean checkMonsterMonsterCollision(int monsterX, int monsterY) {
+        for (Monster m : monsters) {
+            if (monsterX < m.getX() + m.getWidth() &&
+                monsterX + GameConstants.MONSTER_WIDTH > m.getX() &&
+                monsterY < m.getY() + m.getHeight() &&
+                monsterY + GameConstants.MONSTER_HEIGHT > m.getY()) {
+                return true;  // Collision detected
+            }
+        }
+        return false;  // No collision
     }
 
     /**
