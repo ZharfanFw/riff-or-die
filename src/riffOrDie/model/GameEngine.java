@@ -62,7 +62,7 @@ public class GameEngine {
 
     /**
      * Regenerate amplifiers every 7 seconds
-     * Removes destroyed amplifiers and spawns new ones to maintain 2-5 count
+     * Clears all amplifiers and spawns new ones to maintain 2-5 count
      */
     private void regenerateAmplifiers() {
         long currentTime = System.currentTimeMillis();
@@ -70,23 +70,13 @@ public class GameEngine {
         if (currentTime - lastAmplifierRegenerateTime >= GameConstants.AMPLIFIER_REGENERATE_INTERVAL) {
             lastAmplifierRegenerateTime = currentTime;
             
-            // Remove destroyed amplifiers (health <= 0)
-            List<Amplifier> deadAmplifiers = new ArrayList<>();
-            for (Amplifier amp : amplifiers) {
-                if (!amp.isAlive()) {
-                    deadAmplifiers.add(amp);
-                }
-            }
-            amplifiers.removeAll(deadAmplifiers);
+            // Clear all amplifiers
+            amplifiers.clear();
             
-            // Regenerate if needed (maintain 2-5 count)
+            // Spawn new batch
             int count = GameConstants.AMPLIFIER_COUNT_MIN
                     + random.nextInt(GameConstants.AMPLIFIER_COUNT_MAX - GameConstants.AMPLIFIER_COUNT_MIN + 1);
             
-            // Remove old ones completely first (reset to 0), then spawn new
-            amplifiers.clear();
-            
-            // Spawn new amplifiers
             for (int i = 0; i < count; i++) {
                 int x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
                 int y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
@@ -320,6 +310,15 @@ public class GameEngine {
             }
         }
         bullets.removeAll(bulletsToRemove);
+
+        // Remove dead amplifiers (health <= 0)
+        List<Amplifier> deadAmplifiers = new ArrayList<>();
+        for (Amplifier amp : amplifiers) {
+            if (!amp.isAlive()) {
+                deadAmplifiers.add(amp);
+            }
+        }
+        amplifiers.removeAll(deadAmplifiers);
     }
 
     private boolean checkRectangleCollision(Object obj1, Object obj2) {
