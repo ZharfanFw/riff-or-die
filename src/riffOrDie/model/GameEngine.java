@@ -53,9 +53,25 @@ public class GameEngine {
                 + random.nextInt(GameConstants.AMPLIFIER_COUNT_MAX - GameConstants.AMPLIFIER_COUNT_MIN + 1);
 
         for (int i = 0; i < count; i++) {
-            int x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
-            int y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
-            amplifiers.add(new Amplifier(x, y));
+            int x = -1;
+            int y = -1;
+            boolean validPosition = false;
+            int retries = 0;
+            int maxRetries = 10;
+
+            // Find safe spawn position (not colliding with other amplifiers)
+            while (!validPosition && retries < maxRetries) {
+                x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
+                y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
+
+                validPosition = !checkAmplifierSpawnCollision(x, y);
+                retries++;
+            }
+
+            // Only spawn if valid position found
+            if (validPosition) {
+                amplifiers.add(new Amplifier(x, y));
+            }
         }
 
     }
@@ -78,9 +94,25 @@ public class GameEngine {
                     + random.nextInt(GameConstants.AMPLIFIER_COUNT_MAX - GameConstants.AMPLIFIER_COUNT_MIN + 1);
             
             for (int i = 0; i < count; i++) {
-                int x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
-                int y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
-                amplifiers.add(new Amplifier(x, y));
+                int x = -1;
+                int y = -1;
+                boolean validPosition = false;
+                int retries = 0;
+                int maxRetries = 10;
+
+                // Find safe spawn position (not colliding with other amplifiers)
+                while (!validPosition && retries < maxRetries) {
+                    x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
+                    y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
+
+                    validPosition = !checkAmplifierSpawnCollision(x, y);
+                    retries++;
+                }
+
+                // Only spawn if valid position found
+                if (validPosition) {
+                    amplifiers.add(new Amplifier(x, y));
+                }
             }
         }
     }
@@ -164,6 +196,22 @@ public class GameEngine {
 
             spawnInterval = Math.max(500, GameConstants.BASE_SPAWN_RATE - (score / 1000) * 100);
         }
+    }
+
+    /**
+     * Check if spawn position (amplifier at x, y) collides with existing amplifiers
+     * Uses AABB collision detection
+     */
+    private boolean checkAmplifierSpawnCollision(int ampX, int ampY) {
+        for (Amplifier amp : amplifiers) {
+            if (ampX < amp.getX() + amp.getWidth() &&
+                ampX + GameConstants.AMPLIFIER_WIDTH > amp.getX() &&
+                ampY < amp.getY() + amp.getHeight() &&
+                ampY + GameConstants.AMPLIFIER_HEIGHT > amp.getY()) {
+                return true;  // Collision detected
+            }
+        }
+        return false;  // No collision
     }
 
     /**
