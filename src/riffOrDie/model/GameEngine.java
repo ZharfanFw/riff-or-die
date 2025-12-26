@@ -20,14 +20,15 @@ public class GameEngine {
     private long lastSpawnTime;
     private long spawnInterval;
     private long lastUpdateTime;
+    private long lastAmplifierRegenerateTime;
     private Random random;
 
     public GameEngine(String username, int startingSisaPeluru) {
         this.currentUsername = username;
 
-        // Initialize player di posisi tengah atas
+        // Initialize player di posisi center screen
         int playerStartX = GameConstants.SCREEN_WIDTH / 2 - GameConstants.PLAYER_WIDTH / 2;
-        int playerStartY = GameConstants.SCREEN_HEIGHT - 100;
+        int playerStartY = GameConstants.SCREEN_HEIGHT / 2 - GameConstants.PLAYER_HEIGHT / 2;
         this.player = new Player(playerStartX, playerStartY);
 
         // Initialize collections
@@ -52,11 +53,72 @@ public class GameEngine {
                 + random.nextInt(GameConstants.AMPLIFIER_COUNT_MAX - GameConstants.AMPLIFIER_COUNT_MIN + 1);
 
         for (int i = 0; i < count; i++) {
-            int x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
-            int y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
-            amplifiers.add(new Amplifier(x, y));
+            int x = -1;
+            int y = -1;
+            boolean validPosition = false;
+            int retries = 0;
+            int maxRetries = 10;
+
+            // Find safe spawn position (not colliding with other amplifiers)
+            while (!validPosition && retries < maxRetries) {
+                x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
+                y = GameConstants.AMPLIFIER_SPAWN_Y_MIN + random.nextInt(GameConstants.AMPLIFIER_SPAWN_Y_MAX - GameConstants.AMPLIFIER_SPAWN_Y_MIN);
+
+                validPosition = !checkAmplifierSpawnCollision(x, y) &&
+                               !checkAmplifierPlayerCollision(x, y) &&
+                               !checkAmplifierMonsterCollision(x, y);
+                retries++;
+            }
+
+            // Only spawn if valid position found
+            if (validPosition) {
+                amplifiers.add(new Amplifier(x, y));
+            }
         }
 
+    }
+
+    /**
+     * Regenerate amplifiers every 7 seconds
+     * Clears all amplifiers and spawns new ones to maintain 2-5 count
+     */
+    private void regenerateAmplifiers() {
+        long currentTime = System.currentTimeMillis();
+        
+        if (currentTime - lastAmplifierRegenerateTime >= GameConstants.AMPLIFIER_REGENERATE_INTERVAL) {
+            lastAmplifierRegenerateTime = currentTime;
+            
+            // Clear all amplifiers
+            amplifiers.clear();
+            
+            // Spawn new batch
+            int count = GameConstants.AMPLIFIER_COUNT_MIN
+                    + random.nextInt(GameConstants.AMPLIFIER_COUNT_MAX - GameConstants.AMPLIFIER_COUNT_MIN + 1);
+            
+            for (int i = 0; i < count; i++) {
+                int x = -1;
+                int y = -1;
+                boolean validPosition = false;
+                int retries = 0;
+                int maxRetries = 10;
+
+                // Find safe spawn position (not colliding with other amplifiers)
+                while (!validPosition && retries < maxRetries) {
+                    x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
+                    y = GameConstants.AMPLIFIER_SPAWN_Y_MIN + random.nextInt(GameConstants.AMPLIFIER_SPAWN_Y_MAX - GameConstants.AMPLIFIER_SPAWN_Y_MIN);
+
+                    validPosition = !checkAmplifierSpawnCollision(x, y) &&
+                                   !checkAmplifierPlayerCollision(x, y) &&
+                                   !checkAmplifierMonsterCollision(x, y);
+                    retries++;
+                }
+
+                // Only spawn if valid position found
+                if (validPosition) {
+                    amplifiers.add(new Amplifier(x, y));
+                }
+            }
+        }
     }
 
     public void update(double deltaTime) {
@@ -72,6 +134,8 @@ public class GameEngine {
         }
 
         spawnMonsters();
+
+        regenerateAmplifiers();
 
         checkCollisons();
 
@@ -113,7 +177,7 @@ public class GameEngine {
                 // Find safe spawn position (not colliding with amplifiers)
                 while (!validPosition && retries < maxRetries) {
                     x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.MONSTER_WIDTH);
-                    y = 300 + random.nextInt(300);
+                    y = GameConstants.MONSTER_SPAWN_Y_MIN + random.nextInt(GameConstants.MONSTER_SPAWN_Y_MAX - GameConstants.MONSTER_SPAWN_Y_MIN);
 
                     // Check if this position collides with any amplifier
                     validPosition = true;
@@ -136,6 +200,48 @@ public class GameEngine {
 
             spawnInterval = Math.max(500, GameConstants.BASE_SPAWN_RATE - (score / 1000) * 100);
         }
+    }
+
+    /**
+     * Check if amplifier spawn position collides with player
+     */
+    private boolean checkAmplifierPlayerCollision(int ampX, int ampY) {
+        Player p = player;
+        return ampX < p.getX() + p.getWidth() &&
+               ampX + GameConstants.AMPLIFIER_WIDTH > p.getX() &&
+               ampY < p.getY() + p.getHeight() &&
+               ampY + GameConstants.AMPLIFIER_HEIGHT > p.getY();
+    }
+
+    /**
+     * Check if amplifier spawn position collides with any monster
+     */
+    private boolean checkAmplifierMonsterCollision(int ampX, int ampY) {
+        for (Monster m : monsters) {
+            if (ampX < m.getX() + m.getWidth() &&
+                ampX + GameConstants.AMPLIFIER_WIDTH > m.getX() &&
+                ampY < m.getY() + m.getHeight() &&
+                ampY + GameConstants.AMPLIFIER_HEIGHT > m.getY()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if spawn position (amplifier at x, y) collides with existing amplifiers
+     * Uses AABB collision detection
+     */
+    private boolean checkAmplifierSpawnCollision(int ampX, int ampY) {
+        for (Amplifier amp : amplifiers) {
+            if (ampX < amp.getX() + amp.getWidth() &&
+                ampX + GameConstants.AMPLIFIER_WIDTH > amp.getX() &&
+                ampY < amp.getY() + amp.getHeight() &&
+                ampY + GameConstants.AMPLIFIER_HEIGHT > amp.getY()) {
+                return true;  // Collision detected
+            }
+        }
+        return false;  // No collision
     }
 
     /**
@@ -226,18 +332,37 @@ public class GameEngine {
         }
         bullets.removeAll(bulletsToRemove);
 
-        // Check Bullet vs Amplifier
+        // Check Player Bullet vs Amplifier (damage amplifier)
         bulletsToRemove.clear();
 
         for (Bullet bullet : bullets) {
-            for (Amplifier amplifier : amplifiers) {
-                if (amplifier.collidesWith(bullet)) {
-                    bulletsMissed++;
-                    // Monster bullet hit amplifier - add ammo to player
-                    if (!bullet.isPlayerBullet()) {
-                        player.addAmmo(1);
+            if (bullet.isPlayerBullet()) {
+                for (Amplifier amplifier : amplifiers) {
+                    if (amplifier.collidesWith(bullet)) {
+                        amplifier.takeDamage(1);
+                        bulletsMissed++;
+                        bulletsToRemove.add(bullet);
+                        break;
                     }
-                    bulletsToRemove.add(bullet);
+                }
+            }
+        }
+        bullets.removeAll(bulletsToRemove);
+
+        // Check Monster Bullet vs Amplifier (damage amplifier + add ammo)
+        bulletsToRemove.clear();
+
+        for (Bullet bullet : bullets) {
+            if (!bullet.isPlayerBullet()) {
+                for (Amplifier amplifier : amplifiers) {
+                    if (amplifier.collidesWith(bullet)) {
+                        amplifier.takeDamage(1);
+                        // Monster bullet destroyed amplifier - add ammo to player
+                        player.addAmmo(1);
+                        bulletsMissed++;
+                        bulletsToRemove.add(bullet);
+                        break;
+                    }
                 }
             }
         }
@@ -263,6 +388,15 @@ public class GameEngine {
             }
         }
         bullets.removeAll(bulletsToRemove);
+
+        // Remove dead amplifiers (health <= 0)
+        List<Amplifier> deadAmplifiers = new ArrayList<>();
+        for (Amplifier amp : amplifiers) {
+            if (!amp.isAlive()) {
+                deadAmplifiers.add(amp);
+            }
+        }
+        amplifiers.removeAll(deadAmplifiers);
     }
 
     private boolean checkRectangleCollision(Object obj1, Object obj2) {

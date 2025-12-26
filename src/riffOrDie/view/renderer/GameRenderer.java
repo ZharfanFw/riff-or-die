@@ -81,6 +81,9 @@ public class GameRenderer {
                     amp.getHeight()
                 );
             }
+            
+            // Draw health display
+            drawAmplifierHealth(g2d, amp);
         }
     }
 
@@ -174,6 +177,21 @@ public class GameRenderer {
 
         // Draw monsters count
         g2d.drawString("Enemies: " + gameEngine.getMonsters().size(), GameConstants.SCREEN_WIDTH - 150, 20);
+    }
+
+
+    /**
+     * Draw amplifier health number in center
+     */
+    private static void drawAmplifierHealth(Graphics2D g2d, Amplifier amplifier) {
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        String healthText = String.valueOf(amplifier.getHealth());
+        int textX = amplifier.getX() + (amplifier.getWidth() / 2) - 4;
+        int textY = amplifier.getY() + (amplifier.getHeight() / 2) + 5;
+        
+        g2d.drawString(healthText, textX, textY);
     }
 
     private static void drawHealthBar(Graphics2D g2d, int x, int y, int width, int currentHealth, int maxHealth) {
