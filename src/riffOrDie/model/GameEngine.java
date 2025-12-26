@@ -20,6 +20,7 @@ public class GameEngine {
     private long lastSpawnTime;
     private long spawnInterval;
     private long lastUpdateTime;
+    private long lastAmplifierRegenerateTime;
     private Random random;
 
     public GameEngine(String username, int startingSisaPeluru) {
@@ -59,6 +60,41 @@ public class GameEngine {
 
     }
 
+    /**
+     * Regenerate amplifiers every 7 seconds
+     * Removes destroyed amplifiers and spawns new ones to maintain 2-5 count
+     */
+    private void regenerateAmplifiers() {
+        long currentTime = System.currentTimeMillis();
+        
+        if (currentTime - lastAmplifierRegenerateTime >= GameConstants.AMPLIFIER_REGENERATE_INTERVAL) {
+            lastAmplifierRegenerateTime = currentTime;
+            
+            // Remove destroyed amplifiers (health <= 0)
+            List<Amplifier> deadAmplifiers = new ArrayList<>();
+            for (Amplifier amp : amplifiers) {
+                if (!amp.isAlive()) {
+                    deadAmplifiers.add(amp);
+                }
+            }
+            amplifiers.removeAll(deadAmplifiers);
+            
+            // Regenerate if needed (maintain 2-5 count)
+            int count = GameConstants.AMPLIFIER_COUNT_MIN
+                    + random.nextInt(GameConstants.AMPLIFIER_COUNT_MAX - GameConstants.AMPLIFIER_COUNT_MIN + 1);
+            
+            // Remove old ones completely first (reset to 0), then spawn new
+            amplifiers.clear();
+            
+            // Spawn new amplifiers
+            for (int i = 0; i < count; i++) {
+                int x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
+                int y = 100 + random.nextInt(GameConstants.SCREEN_HEIGHT / 2);
+                amplifiers.add(new Amplifier(x, y));
+            }
+        }
+    }
+
     public void update(double deltaTime) {
         // Update player with collision detection against amplifiers
         updatePlayerWithCollisions(deltaTime);
@@ -72,6 +108,8 @@ public class GameEngine {
         }
 
         spawnMonsters();
+
+        regenerateAmplifiers();
 
         checkCollisons();
 
@@ -226,18 +264,37 @@ public class GameEngine {
         }
         bullets.removeAll(bulletsToRemove);
 
-        // Check Bullet vs Amplifier
+        // Check Player Bullet vs Amplifier (damage amplifier)
         bulletsToRemove.clear();
 
         for (Bullet bullet : bullets) {
-            for (Amplifier amplifier : amplifiers) {
-                if (amplifier.collidesWith(bullet)) {
-                    bulletsMissed++;
-                    // Monster bullet hit amplifier - add ammo to player
-                    if (!bullet.isPlayerBullet()) {
-                        player.addAmmo(1);
+            if (bullet.isPlayerBullet()) {
+                for (Amplifier amplifier : amplifiers) {
+                    if (amplifier.collidesWith(bullet)) {
+                        amplifier.takeDamage(1);
+                        bulletsMissed++;
+                        bulletsToRemove.add(bullet);
+                        break;
                     }
-                    bulletsToRemove.add(bullet);
+                }
+            }
+        }
+        bullets.removeAll(bulletsToRemove);
+
+        // Check Monster Bullet vs Amplifier (damage amplifier + add ammo)
+        bulletsToRemove.clear();
+
+        for (Bullet bullet : bullets) {
+            if (!bullet.isPlayerBullet()) {
+                for (Amplifier amplifier : amplifiers) {
+                    if (amplifier.collidesWith(bullet)) {
+                        amplifier.takeDamage(1);
+                        // Monster bullet destroyed amplifier - add ammo to player
+                        player.addAmmo(1);
+                        bulletsMissed++;
+                        bulletsToRemove.add(bullet);
+                        break;
+                    }
                 }
             }
         }
