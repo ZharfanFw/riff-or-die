@@ -10,14 +10,22 @@ import com.riffOrDie.model.Amplifier;
 import com.riffOrDie.model.Bullet;
 import com.riffOrDie.model.GameEngine;
 import com.riffOrDie.model.Monster;
+import com.riffOrDie.model.MonsterType;
 import com.riffOrDie.model.Player;
 import com.riffOrDie.util.ImageLoader;
 import com.riffOrDie.util.GameConstants;
 
 public class GameRenderer {
     public static Image playerImage;
+    public static Image monsterEasyImage;
+    public static Image monsterHardImage;
+    public static Image amplifierImage;
+    
     static {
         playerImage = ImageLoader.loadImage("resources/images/player.png");
+        monsterEasyImage = ImageLoader.loadImage("resources/images/monster-easy.png");
+        monsterHardImage = ImageLoader.loadImage("resources/images/monster-hard.png");
+        amplifierImage = ImageLoader.loadImage("resources/images/amplifier.png");
     }
 
     public static void render(Graphics2D g2d, GameEngine gameEngine) {
@@ -53,46 +61,66 @@ public class GameRenderer {
 
     private static void drawAmplifiers(Graphics2D g2d, List<Amplifier> amplifiers) {
         for (Amplifier amp : amplifiers) {
-            g2d.setColor(new Color(80, 80, 80));
-            g2d.fillRect(amp.getX(), amp.getY(), amp.getWidth(), amp.getHeight());
-
-            g2d.setColor(new Color(50, 50, 50));
-            int gridSize = 8;
-            for (int i = amp.getX(); i < amp.getX() + amp.getWidth(); i += gridSize) {
-                for (int j = amp.getY(); j < amp.getY() + amp.getHeight(); j += gridSize) {
-                    g2d.fillRect(i, j, gridSize - 2, gridSize - 2);
-                }
+            if (amplifierImage != null) {
+                // Draw amplifier image
+                g2d.drawImage(
+                    amplifierImage,
+                    amp.getX(),
+                    amp.getY(),
+                    amp.getWidth(),
+                    amp.getHeight(),
+                    null
+                );
+            } else {
+                // Fallback: black rectangle
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(
+                    amp.getX(),
+                    amp.getY(),
+                    amp.getWidth(),
+                    amp.getHeight()
+                );
             }
-
-            g2d.setColor(new Color(150, 150, 150));
-            g2d.setStroke(new java.awt.BasicStroke(2));
-            g2d.drawRect(amp.getX(), amp.getY(), amp.getWidth(), amp.getHeight());
         }
     }
 
     private static void drawMonsters(Graphics2D g2d, List<Monster> monsters) {
         for (Monster monster : monsters) {
-            // Draw monster body - dark red circle
-            g2d.setColor(new Color(139, 0, 0));
-            g2d.fillOval(
+            Image image = monster.getType() == MonsterType.EASY ? 
+                          monsterEasyImage : monsterHardImage;
+            
+            if (image != null) {
+                // Draw monster image
+                g2d.drawImage(
+                    image,
                     monster.getX(),
                     monster.getY(),
                     monster.getWidth(),
-                    monster.getHeight());
-
-            // Draw eyes
-            g2d.setColor(Color.WHITE);
-            int eyeRadius = 3;
-            int centerX = monster.getX() + monster.getWidth() / 2;
-            int centerY = monster.getY() + monster.getHeight() / 2;
-
-            // Left eye
-            g2d.fillOval(centerX - 8 - eyeRadius, centerY - eyeRadius, eyeRadius * 2, eyeRadius * 2);
-            // Right eye
-            g2d.fillOval(centerX + 8 - eyeRadius, centerY - eyeRadius, eyeRadius * 2, eyeRadius * 2);
-
-            // Draw health bar
-            drawHealthBar(g2d, monster.getX(), monster.getY() - 8, monster.getWidth(), monster.getHealth(), monster.getType().getHealth());
+                    monster.getHeight(),
+                    null
+                );
+            } else {
+                // Fallback: black rectangle
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(
+                    monster.getX(),
+                    monster.getY(),
+                    monster.getWidth(),
+                    monster.getHeight()
+                );
+            }
+            
+            // Draw health bar only when damaged
+            if (monster.getHealth() < monster.getType().getHealth()) {
+                drawHealthBar(
+                    g2d,
+                    monster.getX(),
+                    monster.getY() - 8,
+                    monster.getWidth(),
+                    monster.getHealth(),
+                    monster.getType().getHealth()
+                );
+            }
         }
     }
 

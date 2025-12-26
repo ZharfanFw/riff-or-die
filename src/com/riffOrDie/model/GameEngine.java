@@ -104,16 +104,49 @@ public class GameEngine {
 
             int spawnCount = 1 + random.nextInt(2);
             for (int i = 0; i < spawnCount; i++) {
-                int x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.MONSTER_WIDTH);
-                int y = 300 + random.nextInt(300);
+                int x = -1;
+                int y = -1;
+                boolean validPosition = false;
+                int retries = 0;
+                int maxRetries = 10;
 
-                MonsterType type = random.nextDouble() < 0.7 ? MonsterType.EASY : MonsterType.HARD;
+                // Find safe spawn position (not colliding with amplifiers)
+                while (!validPosition && retries < maxRetries) {
+                    x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.MONSTER_WIDTH);
+                    y = 300 + random.nextInt(300);
 
-                monsters.add(new Monster(x, y, type));
+                    // Check if this position collides with any amplifier
+                    validPosition = true;
+                    for (Amplifier amp : amplifiers) {
+                        if (checkMonsterSpawnCollision(x, y, amp)) {
+                            validPosition = false;
+                            break;
+                        }
+                    }
+
+                    retries++;
+                }
+
+                // Only spawn if valid position found
+                if (validPosition) {
+                    MonsterType type = random.nextDouble() < 0.7 ? MonsterType.EASY : MonsterType.HARD;
+                    monsters.add(new Monster(x, y, type));
+                }
             }
 
             spawnInterval = Math.max(500, GameConstants.BASE_SPAWN_RATE - (score / 1000) * 100);
         }
+    }
+
+    /**
+     * Check if spawn position (monster at x, y) collides with amplifier
+     * Uses AABB collision detection
+     */
+    private boolean checkMonsterSpawnCollision(int monsterX, int monsterY, Amplifier amplifier) {
+        return monsterX < amplifier.getX() + amplifier.getWidth() &&
+               monsterX + GameConstants.MONSTER_WIDTH > amplifier.getX() &&
+               monsterY < amplifier.getY() + amplifier.getHeight() &&
+               monsterY + GameConstants.MONSTER_HEIGHT > amplifier.getY();
     }
 
     /**

@@ -9,20 +9,20 @@ public class GameConstants {
 
     // Player Setting
     public static final int PLAYER_WIDTH = 58;
-    public static final int PLAYER_HEIGHT = 68;
+    public static final int PLAYER_HEIGHT = 64;
     public static final int PLAYER_HEALTH = 5;
     public static final double PLAYER_SPEED = 230.0; // px per second
     public static final double PLAYER_BULLET_SPEED = 240.0; // px per second
 
     // Monster Setting
-    public static final int MONSTER_WIDTH = 50;
-    public static final int MONSTER_HEIGHT = 50;
+    public static final int MONSTER_WIDTH = 58;
+    public static final int MONSTER_HEIGHT = 56;
     public static final double MONSTER_BULLET_SPEED = 150.0; // px per second
     public static final long MONSTER_SHOOT_COOLDOWN = 2500; // 2.5 seconds // milisecond
 
     // Amplifier (Obstacle) Setting
-    public static final int AMPLIFIER_WIDTH = 40;
-    public static final int AMPLIFIER_HEIGHT = 40;
+    public static final int AMPLIFIER_WIDTH = 78;
+    public static final int AMPLIFIER_HEIGHT = 60;
     public static final int AMPLIFIER_COUNT_MIN = 2;
     public static final int AMPLIFIER_COUNT_MAX = 5;
 
