@@ -36,6 +36,7 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     private int score;
     private int health;
     private int currentAmmo = 0;
+    private int bulletsMissed = 0;
 
     private Thread gameThread;
     private volatile boolean isRunning;
@@ -98,14 +99,6 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // Render semua entities yang telah di-update oleh presenter
-        if (player != null && monsters != null && bullets != null && amplifiers != null) {
-            // Create temporary GameEngine-like object for rendering
-            // Or render directly using stored state
-            g2d.setColor(java.awt.Color.WHITE);
-            g2d.drawString("Riff or Die", 10, 20);
-        }
-
         // Call GameRenderer dengan player, monsters, bullets, amplifiers
         // Copy lists to prevent ConcurrentModificationException
         if (amplifiers != null) {
@@ -134,12 +127,12 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         // Draw health
         g2d.drawString("Health: " + health, 10, 40);
 
-        // Draw ammo
-        GameRenderer.drawAmmo(g2d, currentAmmo, GameConstants.AMMO_HUD_X, GameConstants.AMMO_HUD_Y);
+        // Draw ammo (with missed count)
+        GameRenderer.drawAmmo(g2d, currentAmmo, bulletsMissed, 10, 60);
 
-        // Draw enemies count
+        // Draw enemies count (kanan atas)
         if (monsters != null) {
-            g2d.drawString("Enemies: " + monsters.size(), GameConstants.SCREEN_WIDTH - 150, 20);
+            g2d.drawString("Enemies: " + monsters.size(), 700, 20);
         }
     }
 
@@ -179,8 +172,9 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     }
 
     @Override
-    public void updateAmmo(int ammoCount) {
+    public void updateAmmo(int ammoCount, int bulletsMissed) {
         this.currentAmmo = ammoCount;
+        this.bulletsMissed = bulletsMissed;
     }
 
     @Override

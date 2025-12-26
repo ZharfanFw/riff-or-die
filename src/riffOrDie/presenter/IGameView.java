@@ -27,7 +27,7 @@ public interface IGameView {
      */
     void updateBulletsFired(int bulletsFired);
 
-    void updateAmmo(int ammoCount);
+    void updateAmmo(int ammoCount, int bulletsMissed);
 
     /**
      * Update monsters list untuk rendering

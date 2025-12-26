@@ -7,6 +7,7 @@ public class Amplifier {
     private int y;
     private int width;
     private int height;
+    private int health;
 
     // Constructors
     public Amplifier(int x, int y) {
@@ -14,6 +15,7 @@ public class Amplifier {
         this.y = y;
         this.width = GameConstants.AMPLIFIER_WIDTH;
         this.height = GameConstants.AMPLIFIER_HEIGHT;
+        this.health = GameConstants.AMPLIFIER_HEALTH;
     }
 
     public boolean collidesWith(Bullet bullet) {
@@ -21,6 +23,25 @@ public class Amplifier {
         boolean collidingY = y < bullet.getY() + bullet.getHeight() && y + height > bullet.getY();
 
         return collidingX && collidingY;
+    }
+
+    /**
+     * Take damage to this amplifier
+     * @param damage Amount of damage to take
+     */
+    public void takeDamage(int damage) {
+        this.health -= damage;
+        if (this.health < 0) {
+            this.health = 0;
+        }
+    }
+
+    /**
+     * Check if amplifier is still alive
+     * @return true if health > 0, false otherwise
+     */
+    public boolean isAlive() {
+        return this.health > 0;
     }
 
     // Getters
@@ -38,5 +59,9 @@ public class Amplifier {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getHealth() {
+        return health;
     }
 }

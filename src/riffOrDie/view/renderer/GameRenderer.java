@@ -53,10 +53,10 @@ public class GameRenderer {
         drawPlayer(g2d, player);
     }
 
-    public static void drawAmmo(Graphics2D g, int ammo, int x, int y) {
+    public static void drawAmmo(Graphics2D g, int ammo, int bulletsMissed, int x, int y) {
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 16));
-        g.drawString("Ammo: " + ammo, x, y);
+        g.setFont(new Font("Arial", Font.BOLD, 14));
+        g.drawString("Ammo: " + ammo + " (Missed: " + bulletsMissed + ")", x, y);
     }
 
     private static void drawAmplifiers(Graphics2D g2d, List<Amplifier> amplifiers) {
