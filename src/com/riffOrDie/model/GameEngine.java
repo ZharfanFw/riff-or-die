@@ -60,7 +60,8 @@ public class GameEngine {
     }
 
     public void update(double deltaTime) {
-        player.update(deltaTime);
+        // Update player with collision detection against amplifiers
+        updatePlayerWithCollisions(deltaTime);
 
         for (Monster monster : monsters) {
             monster.update(deltaTime);
@@ -85,6 +86,10 @@ public class GameEngine {
         List<Bullet> inactiveBullets = new ArrayList<>();
         for (Bullet b : bullets) {
             if (!b.isActive()) {
+                // Monster bullet went off-screen - add ammo to player
+                if (!b.isPlayerBullet()) {
+                    player.addAmmo(1);
+                }
                 inactiveBullets.add(b);
             }
         }
@@ -108,6 +113,63 @@ public class GameEngine {
             }
 
             spawnInterval = Math.max(500, GameConstants.BASE_SPAWN_RATE - (score / 1000) * 100);
+        }
+    }
+
+    /**
+     * Update player position with collision detection against amplifiers
+     * Implements smart sliding: allows movement in one axis even if blocked in another
+     */
+    private void updatePlayerWithCollisions(double deltaTime) {
+        int currentX = player.getX();
+        int currentY = player.getY();
+
+        // Calculate new position with delta time
+        int newX = currentX + (int)(player.getVelocityX() * GameConstants.PLAYER_SPEED * deltaTime);
+        int newY = currentY + (int)(player.getVelocityY() * GameConstants.PLAYER_SPEED * deltaTime);
+
+        // Check screen boundaries
+        if (newX < 0) newX = 0;
+        if (newX + player.getWidth() > GameConstants.SCREEN_WIDTH) {
+            newX = GameConstants.SCREEN_WIDTH - player.getWidth();
+        }
+        if (newY < 0) newY = 0;
+        if (newY + player.getHeight() > GameConstants.SCREEN_HEIGHT) {
+            newY = GameConstants.SCREEN_HEIGHT - player.getHeight();
+        }
+
+        // Smart collision sliding: check X and Y movements independently
+        boolean canMoveX = true;
+        boolean canMoveY = true;
+
+        // Check collision for X movement
+        for (Amplifier amp : amplifiers) {
+            if (newX < amp.getX() + amp.getWidth() && 
+                newX + player.getWidth() > amp.getX() &&
+                currentY < amp.getY() + amp.getHeight() && 
+                currentY + player.getHeight() > amp.getY()) {
+                canMoveX = false;
+                break;
+            }
+        }
+
+        // Check collision for Y movement
+        for (Amplifier amp : amplifiers) {
+            if (currentX < amp.getX() + amp.getWidth() && 
+                currentX + player.getWidth() > amp.getX() &&
+                newY < amp.getY() + amp.getHeight() && 
+                newY + player.getHeight() > amp.getY()) {
+                canMoveY = false;
+                break;
+            }
+        }
+
+        // Update position based on what's allowed
+        if (canMoveX) {
+            player.setX(newX);
+        }
+        if (canMoveY) {
+            player.setY(newY);
         }
     }
 
@@ -138,6 +200,10 @@ public class GameEngine {
             for (Amplifier amplifier : amplifiers) {
                 if (amplifier.collidesWith(bullet)) {
                     bulletsMissed++;
+                    // Monster bullet hit amplifier - add ammo to player
+                    if (!bullet.isPlayerBullet()) {
+                        player.addAmmo(1);
+                    }
                     bulletsToRemove.add(bullet);
                 }
             }

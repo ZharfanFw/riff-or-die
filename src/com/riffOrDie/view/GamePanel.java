@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import java.util.List;
 
 import com.riffOrDie.util.InputHandler;
+import com.riffOrDie.view.GameRenderer;
 import com.riffOrDie.model.Amplifier;
 import com.riffOrDie.model.Bullet;
 import com.riffOrDie.model.Monster;
@@ -26,7 +27,7 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     private GameFrame gameFrame;
     private IGamePresenter presenter;
     private InputHandler inputHandler;
-    
+
     // Game state untuk rendering (diupdate oleh presenter)
     private Player player;
     private List<Monster> monsters;
@@ -34,7 +35,8 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     private List<Amplifier> amplifiers;
     private int score;
     private int health;
-    
+    private int currentAmmo = 0;
+
     private Thread gameThread;
     private volatile boolean isRunning;
 
@@ -47,7 +49,7 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
 
         // Create presenter
         this.presenter = new GamePresenter(this);
-        
+
         // Setup input handler
         this.inputHandler = new InputHandler(presenter);
         addKeyListener(inputHandler);
@@ -118,7 +120,7 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         if (player != null) {
             GameRenderer.drawPlayerStatic(g2d, player);
         }
-        
+
         drawUI(g2d);
     }
 
@@ -131,6 +133,9 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
 
         // Draw health
         g2d.drawString("Health: " + health, 10, 40);
+
+        // Draw ammo
+        GameRenderer.drawAmmo(g2d, currentAmmo, GameConstants.AMMO_HUD_X, GameConstants.AMMO_HUD_Y);
 
         // Draw enemies count
         if (monsters != null) {
@@ -174,6 +179,11 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     }
 
     @Override
+    public void updateAmmo(int ammoCount) {
+        this.currentAmmo = ammoCount;
+    }
+
+    @Override
     public void updateMonsters(List<Monster> monsters) {
         this.monsters = monsters;
     }
@@ -197,15 +207,14 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     public void showGameOverDialog(int finalScore) {
         // Stop game loop
         isRunning = false;
-        
+
         // Show blocking JOptionPane dialog
         JOptionPane.showMessageDialog(
-            this,
-            "Game Over!\n\nScore: " + finalScore,
-            "Game Over",
-            JOptionPane.INFORMATION_MESSAGE
-        );
-        
+                this,
+                "Game Over!\n\nScore: " + finalScore,
+                "Game Over",
+                JOptionPane.INFORMATION_MESSAGE);
+
         // After user clicks OK, return to menu
         gameFrame.backToMenu();
     }

@@ -14,6 +14,8 @@ public class Player {
     private int velocityX;
     private int velocityY;
 
+    private int ammo = 0;
+
     public Player(int startX, int startY) {
         this.x = startX;
         this.y = startY;
@@ -26,8 +28,8 @@ public class Player {
     }
 
     public void update(double deltaTime) {
-        x += (int)(velocityX * GameConstants.PLAYER_SPEED * deltaTime);
-        y += (int)(velocityY * GameConstants.PLAYER_SPEED * deltaTime);
+        x += (int) (velocityX * GameConstants.PLAYER_SPEED * deltaTime);
+        y += (int) (velocityY * GameConstants.PLAYER_SPEED * deltaTime);
 
         if (x < 0) {
             x = 0;
@@ -100,5 +102,32 @@ public class Player {
 
     public int getCenterY() {
         return y;
+    }
+
+    public int getAmmo() {
+        return ammo;
+    }
+
+    // Setters for position (used for collision handling)
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void addAmmo(int amount) {
+        ammo += amount;
+    }
+
+    public void useAmmo() {
+        if (ammo > 0) {
+            ammo--;
+        }
+    }
+
+    public void setAmmo(int amount) {
+        ammo = amount;
     }
 }

@@ -11,7 +11,7 @@ public class GameConstants {
     public static final int PLAYER_WIDTH = 58;
     public static final int PLAYER_HEIGHT = 68;
     public static final int PLAYER_HEALTH = 5;
-    public static final double PLAYER_SPEED = 180.0; // px per second
+    public static final double PLAYER_SPEED = 230.0; // px per second
     public static final double PLAYER_BULLET_SPEED = 240.0; // px per second
 
     // Monster Setting
@@ -25,6 +25,10 @@ public class GameConstants {
     public static final int AMPLIFIER_HEIGHT = 40;
     public static final int AMPLIFIER_COUNT_MIN = 2;
     public static final int AMPLIFIER_COUNT_MAX = 5;
+
+    // Ammo HUD Display position (top-left, below health)
+    public static final int AMMO_HUD_X = 10;
+    public static final int AMMO_HUD_Y = 30;
 
     // Spawning Setting
     public static final long BASE_SPAWN_RATE = 5000; // 4 seconds // milisecond

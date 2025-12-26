@@ -45,6 +45,12 @@ public class GameRenderer {
         drawPlayer(g2d, player);
     }
 
+    public static void drawAmmo(Graphics2D g, int ammo, int x, int y) {
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Ammo: " + ammo, x, y);
+    }
+
     private static void drawAmplifiers(Graphics2D g2d, List<Amplifier> amplifiers) {
         for (Amplifier amp : amplifiers) {
             g2d.setColor(new Color(80, 80, 80));

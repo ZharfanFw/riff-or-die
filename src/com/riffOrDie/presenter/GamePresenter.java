@@ -41,6 +41,9 @@ public class GamePresenter implements IGamePresenter {
         this.gameEngine = new GameEngine(username, sisaPeluru);
         this.gameOver = false;
         
+        // Load ammo from database or set to 0
+        gameEngine.getPlayer().setAmmo(sisaPeluru);
+        
         // Notify view bahwa game sudah dimulai
         updateView();
     }
@@ -68,7 +71,11 @@ public class GamePresenter implements IGamePresenter {
             return;
         }
         
-        gameEngine.playerShoot();
+        if (gameEngine.getPlayer().getAmmo() > 0) {
+            gameEngine.getPlayer().useAmmo();
+            gameEngine.playerShoot();
+            view.updateAmmo(gameEngine.getPlayer().getAmmo());
+        }
     }
 
     /**
@@ -107,6 +114,7 @@ public class GamePresenter implements IGamePresenter {
         // Update score, health, ammo
         view.updateScore(gameEngine.getScore());
         view.updateHealth(gameEngine.getPlayer().getHealth());
+        view.updateAmmo(gameEngine.getPlayer().getAmmo());
         
         // Update entities
         view.updateMonsters(gameEngine.getMonsters());
@@ -126,12 +134,12 @@ public class GamePresenter implements IGamePresenter {
         
         gameOver = true;
         
-        // Create GameScore object
+        // Create GameScore object with current ammo
         GameScore gameScore = new GameScore();
         gameScore.setUsername(username);
         gameScore.setSkor(gameEngine.getScore());
         gameScore.setPeluruMeleset(gameEngine.getBulletsMissed());
-        gameScore.setSisaPeluru(startingSisaPeluru);
+        gameScore.setSisaPeluru(gameEngine.getPlayer().getAmmo());
         
         // Save to database
         try {
@@ -179,12 +187,12 @@ public class GamePresenter implements IGamePresenter {
             return;
         }
 
-        // Save score before returning
+        // Save score before returning with current ammo
         GameScore gameScore = new GameScore();
         gameScore.setUsername(username);
         gameScore.setSkor(gameEngine.getScore());
         gameScore.setPeluruMeleset(gameEngine.getBulletsMissed());
-        gameScore.setSisaPeluru(startingSisaPeluru);
+        gameScore.setSisaPeluru(gameEngine.getPlayer().getAmmo());
 
         // Save to database
         try {
