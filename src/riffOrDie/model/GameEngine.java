@@ -173,7 +173,7 @@ public class GameEngine {
                 // Find safe spawn position (not colliding with amplifiers)
                 while (!validPosition && retries < maxRetries) {
                     x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.MONSTER_WIDTH);
-                    y = 300 + random.nextInt(300);
+                    y = GameConstants.MONSTER_SPAWN_Y_MIN + random.nextInt(GameConstants.MONSTER_SPAWN_Y_MAX - GameConstants.MONSTER_SPAWN_Y_MIN);
 
                     // Check if this position collides with any amplifier
                     validPosition = true;

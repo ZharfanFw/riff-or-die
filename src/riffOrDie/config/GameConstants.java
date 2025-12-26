@@ -27,12 +27,16 @@ public class GameConstants {
     public static final long AMPLIFIER_REGENERATE_INTERVAL = 8000; // 8 seconds in milliseconds
     public static final int AMPLIFIER_COUNT_MIN = 2;
     public static final int AMPLIFIER_COUNT_MAX = 5;
-    public static final int AMPLIFIER_SPAWN_Y_MIN = 400; // amplifier spawn Y range min
-    public static final int AMPLIFIER_SPAWN_Y_MAX = 600; // amplifier spawn Y range max
+    public static final int AMPLIFIER_SPAWN_Y_MIN = 200; // amplifier spawn Y range min
+    public static final int AMPLIFIER_SPAWN_Y_MAX = 400; // amplifier spawn Y range max
 
     // Ammo HUD Display position (top-left, below health)
     public static final int AMMO_HUD_X = 10;
     public static final int AMMO_HUD_Y = 30;
+
+    // Monster Spawn Setting
+    public static final int MONSTER_SPAWN_Y_MIN = 300; // monster spawn Y range min
+    public static final int MONSTER_SPAWN_Y_MAX = 544; // monster spawn Y range max (600 - 56 height)
 
     // Spawning Setting
     public static final long BASE_SPAWN_RATE = 5000; // 4 seconds // milisecond
