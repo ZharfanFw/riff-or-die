@@ -64,7 +64,9 @@ public class GameEngine {
                 x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
                 y = GameConstants.AMPLIFIER_SPAWN_Y_MIN + random.nextInt(GameConstants.AMPLIFIER_SPAWN_Y_MAX - GameConstants.AMPLIFIER_SPAWN_Y_MIN);
 
-                validPosition = !checkAmplifierSpawnCollision(x, y);
+                validPosition = !checkAmplifierSpawnCollision(x, y) &&
+                               !checkAmplifierPlayerCollision(x, y) &&
+                               !checkAmplifierMonsterCollision(x, y);
                 retries++;
             }
 
@@ -105,7 +107,9 @@ public class GameEngine {
                     x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
                     y = GameConstants.AMPLIFIER_SPAWN_Y_MIN + random.nextInt(GameConstants.AMPLIFIER_SPAWN_Y_MAX - GameConstants.AMPLIFIER_SPAWN_Y_MIN);
 
-                    validPosition = !checkAmplifierSpawnCollision(x, y);
+                    validPosition = !checkAmplifierSpawnCollision(x, y) &&
+                                   !checkAmplifierPlayerCollision(x, y) &&
+                                   !checkAmplifierMonsterCollision(x, y);
                     retries++;
                 }
 
@@ -196,6 +200,32 @@ public class GameEngine {
 
             spawnInterval = Math.max(500, GameConstants.BASE_SPAWN_RATE - (score / 1000) * 100);
         }
+    }
+
+    /**
+     * Check if amplifier spawn position collides with player
+     */
+    private boolean checkAmplifierPlayerCollision(int ampX, int ampY) {
+        Player p = player;
+        return ampX < p.getX() + p.getWidth() &&
+               ampX + GameConstants.AMPLIFIER_WIDTH > p.getX() &&
+               ampY < p.getY() + p.getHeight() &&
+               ampY + GameConstants.AMPLIFIER_HEIGHT > p.getY();
+    }
+
+    /**
+     * Check if amplifier spawn position collides with any monster
+     */
+    private boolean checkAmplifierMonsterCollision(int ampX, int ampY) {
+        for (Monster m : monsters) {
+            if (ampX < m.getX() + m.getWidth() &&
+                ampX + GameConstants.AMPLIFIER_WIDTH > m.getX() &&
+                ampY < m.getY() + m.getHeight() &&
+                ampY + GameConstants.AMPLIFIER_HEIGHT > m.getY()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

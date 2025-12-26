@@ -25,7 +25,7 @@ public class GameConstants {
     public static final int AMPLIFIER_HEIGHT = 60;
     public static final int AMPLIFIER_HEALTH = 3; // health points per amplifier
     public static final long AMPLIFIER_REGENERATE_INTERVAL = 8000; // 8 seconds in milliseconds
-    public static final int AMPLIFIER_COUNT_MIN = 2;
+    public static final int AMPLIFIER_COUNT_MIN = 3;
     public static final int AMPLIFIER_COUNT_MAX = 5;
     public static final int AMPLIFIER_SPAWN_Y_MIN = 200; // amplifier spawn Y range min
     public static final int AMPLIFIER_SPAWN_Y_MAX = 400; // amplifier spawn Y range max
