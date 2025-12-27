@@ -1,5 +1,17 @@
 package riffOrDie.presenter.util;
 
+
+/**
+ * IMAGELOADER - Load PNG assets
+ * 
+ * Fungsi:
+ * - loadImage(path) - Load PNG file
+ * - Return BufferedImage atau null jika fail
+ * - Graceful fallback jika asset missing
+ * 
+ * Assets: player.png, monster-easy.png, monster-hard.png, amplifier.png,
+ *         bullet-player.png, bullet-monster.png
+ */
 import javax.imageio.ImageIO;
 import java.awt.Image;
 import java.awt.image.BufferedImage;

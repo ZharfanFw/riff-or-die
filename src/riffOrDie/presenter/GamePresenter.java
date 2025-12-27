@@ -1,5 +1,19 @@
 package riffOrDie.presenter;
 
+
+/**
+ * GAMEPRESENTER - Bridge GameEngine <-> GamePanel
+ * 
+ * Fungsi:
+ * - Store reference ke GameEngine & GamePanel
+ * - playerMove() - Delegate movement ke engine
+ * - playerShoot() - Delegate shooting ke engine + play audio
+ * - update() - Update engine + update view
+ * - returnToMenu() - Cleanup + save score + show dialog
+ * - endGame() - Show game over dialog
+ * 
+ * Penting: ALL user actions go through presenter!
+ */
 import riffOrDie.model.database.DatabaseManager;
 import riffOrDie.model.GameEngine;
 import riffOrDie.model.GameScore;

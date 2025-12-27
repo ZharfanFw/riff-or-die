@@ -1,5 +1,15 @@
 package riffOrDie.presenter;
 
+
+/**
+ * IGAMEPRESENTER - Interface kontrak GamePresenter
+ * 
+ * Fungsi:
+ * - Define contract untuk GamePresenter
+ * - Methods: startGame, playerMove, playerShoot, update, returnToMenu
+ * 
+ * Pattern: Interface -> loose coupling, easy testing
+ */
 /**
  * Interface untuk Game Presenter (MVP Pattern)
  * Presenter HANYA bertanggung jawab untuk orchestrate business logic

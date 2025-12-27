@@ -1,5 +1,17 @@
 package riffOrDie.model;
 
+
+/**
+ * BULLET - Entity proyektil
+ * 
+ * Fungsi:
+ * - Posisi, velocity (velocityX, velocityY)
+ * - isPlayerBullet() check
+ * - getAngle() untuk visual rotation
+ * - Collision detection (AABB)
+ * 
+ * Key: Velocity-based movement untuk smooth tracking
+ */
 import riffOrDie.config.GameConstants;
 
 public class Bullet {

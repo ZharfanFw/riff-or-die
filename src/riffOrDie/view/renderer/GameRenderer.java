@@ -1,5 +1,20 @@
 package riffOrDie.view.renderer;
 
+
+/**
+ * GAMERENDERER - Static drawing utilities
+ * 
+ * Fungsi:
+ * - drawPlayer() - Draw player PNG
+ * - drawMonsters() - Draw monster PNG + health bar
+ * - drawBullets() - Draw bullet PNG + rotation
+ * - drawAmplifiers() - Draw amplifier PNG + health
+ * - drawAmmo() - Draw ammo HUD text
+ * 
+ * Pattern: Static methods - reusable, no state!
+ * 
+ * Fallback: Colored rectangles jika PNG load fail
+ */
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Font;

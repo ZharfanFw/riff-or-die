@@ -1,5 +1,16 @@
 package riffOrDie.model;
 
+
+/**
+ * MONSTERTYPE - Enum tipe monster
+ * 
+ * Fungsi:
+ * - Define EASY dan HARD monster
+ * - Simpan stats: health, score, width, height
+ * - Getter methods
+ * 
+ * Pattern: Enum dengan data untuk cleaner code
+ */
 import riffOrDie.config.GameConstants;
 
 public enum MonsterType {

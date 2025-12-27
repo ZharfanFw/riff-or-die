@@ -1,5 +1,16 @@
 package riffOrDie.model;
 
+
+/**
+ * AMPLIFIER - Entity obstacle
+ * 
+ * Fungsi:
+ * - Posisi, health (3 HP)
+ * - Take damage method
+ * - Check alive status
+ * 
+ * Regen: Auto-regenerate setiap 8 detik (di GameEngine)
+ */
 import riffOrDie.config.GameConstants;
 
 public class Amplifier {

@@ -1,5 +1,23 @@
 package riffOrDie.presenter.util;
 
+
+/**
+ * AUDIOMANAGER - Centralized audio management
+ * 
+ * Fungsi:
+ * - Load semua WAV files di initialize()
+ * - playPlayerShoot() - Player bullet sound (overlap)
+ * - playMonsterHit() - Monster hit sound (overlap)
+ * - playMonsterShoot() - Monster shoot sound (overlap)
+ * - playAmplifierHit() - Amplifier hit sound (interrupt)
+ * - playBackgroundMusic() - BGM loop
+ * - Smart volume control (fallback MASTER_GAIN -> VOLUME)
+ * 
+ * Audio Behavior:
+ * - Player bullet & monster hit: Overlap (multiple simultaneous)
+ * - Amplifier hit: Interrupt (single instance)
+ * - Monster shoot: Overlap
+ */
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;

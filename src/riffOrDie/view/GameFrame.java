@@ -1,5 +1,17 @@
 package riffOrDie.view;
 
+
+/**
+ * GAMEFRAME - Main window container
+ * 
+ * Fungsi:
+ * - JFrame setup (800x600, not resizable)
+ * - CardLayout untuk panel switching (menu <-> game)
+ * - switchToGamePanel() - Menu ke Game
+ * - switchToMenuPanel() - Game ke Menu
+ * 
+ * Pattern: JFrame + CardLayout = clean panel switching
+ */
 import javax.swing.JFrame;
 import riffOrDie.presenter.MenuPresenter;
 import riffOrDie.config.GameConstants;

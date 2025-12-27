@@ -1,5 +1,14 @@
 package riffOrDie.model;
 
+
+/**
+ * MONSTER - Entity musuh
+ * 
+ * Fungsi:
+ * - Posisi, health, type (EASY/HARD)
+ * - Shoot logic dengan cooldown
+ * - Take damage method
+ */
 import riffOrDie.config.GameConstants;
 
 public class Monster {

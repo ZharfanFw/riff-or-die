@@ -1,6 +1,20 @@
 package riffOrDie.view;
 import riffOrDie.presenter.util.AudioManager;
 
+/**
+ * GAMEPANEL - Game rendering & input
+ * 
+ * Fungsi:
+ * - Game loop (run() method)
+ * - Input handler (keyboard listener)
+ * - paintComponent() - Render semua entities
+ * - Update HUD (score, health, ammo, enemies, wave)
+ * - Game over dialog
+ * - Wave notification (fade in/out)
+ * 
+ * Key Methods: run(), paintComponent(), keyPressed()
+ */
+
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import java.awt.Graphics;

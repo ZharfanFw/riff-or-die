@@ -1,5 +1,13 @@
 package riffOrDie.presenter;
 
+
+/**
+ * IMENUPRESENTER - Interface kontrak MenuPresenter
+ * 
+ * Fungsi:
+ * - Define contract untuk MenuPresenter
+ * - Methods: loadScoreboard, onPlayClicked, onQuitClicked
+ */
 /**
  * Interface untuk Menu Presenter (MVP Pattern)
  * Presenter handle semua business logic untuk menu

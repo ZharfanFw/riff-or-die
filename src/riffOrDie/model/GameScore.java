@@ -1,5 +1,16 @@
 package riffOrDie.model;
 
+
+/**
+ * GAMESCORE - Data Transfer Object (DTO)
+ * 
+ * Fungsi:
+ * - Container untuk data score
+ * - Fields: username, skor, peluru_meleset, sisa_peluru
+ * - Getter/setter methods
+ * 
+ * Digunakan: Pass data ke/dari database
+ */
 public class GameScore {
     private String username;
     private int skor;
