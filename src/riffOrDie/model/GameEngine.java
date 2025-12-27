@@ -501,7 +501,7 @@ public class GameEngine {
     }
 
     public void playerShoot() {
-        int centerX = player.getCenterX();
+        int centerX = player.getCenterX() + GameConstants.PLAYER_BULLET_SPAWN_OFFSET_X;
         int centerY = player.getCenterY();
         bullets.add(new Bullet(centerX, centerY, true));
         bulletsFired++;
