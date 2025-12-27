@@ -10,6 +10,7 @@ import java.io.File;
 /**
  * AudioManager - Handle semua audio playback (SFX dan BGM)
  * Thread-safe sound playback dengan smart volume control (smart fallback)
+ * Interrupt-based playback untuk player bullet dan amplifier hit sounds
  */
 public class AudioManager {
     private static Clip playerShootClip;
@@ -50,24 +51,24 @@ public class AudioManager {
     }
 
     /**
-     * Play player shoot sound effect
+     * Play player shoot sound effect (interrupt-based: stops previous sound and restarts)
      */
     public static void playPlayerShoot() {
-        playClip(playerShootClip, playerShootVolume);
+        playClipWithInterrupt(playerShootClip, playerShootVolume);
     }
 
     /**
-     * Play monster shoot sound effect
+     * Play monster shoot sound effect (default behavior: allows overlap)
      */
     public static void playMonsterShoot() {
         playClip(monsterShootClip, monsterShootVolume);
     }
 
     /**
-     * Play amplifier hit sound effect
+     * Play amplifier hit sound effect (interrupt-based: stops previous sound and restarts)
      */
     public static void playAmplifierHit() {
-        playClip(amplifierHitClip, amplifierHitVolume);
+        playClipWithInterrupt(amplifierHitClip, amplifierHitVolume);
     }
 
     /**
@@ -91,7 +92,8 @@ public class AudioManager {
     }
 
     /**
-     * Play clip (SFX) tanpa looping
+     * Play clip (SFX) tanpa looping - default behavior
+     * Used by sounds that should allow overlap (e.g., monster shoot)
      */
     private static void playClip(Clip clip, float volume) {
         if (clip != null) {
@@ -101,6 +103,24 @@ public class AudioManager {
                 clip.start();
             } catch (Exception e) {
                 System.err.println("Error playing clip: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Play clip dengan interrupt - stops and restarts sound jika already playing
+     * Used by sounds yang ingin interrupt behavior (player bullet, amplifier hit)
+     * Saat di-trigger ulang sebelum sound selesai → stop sound lama + restart dari frame 0
+     */
+    private static void playClipWithInterrupt(Clip clip, float volume) {
+        if (clip != null) {
+            try {
+                clip.stop();                  // INTERRUPT: stop jika masih running
+                clip.setFramePosition(0);     // Reset ke awal
+                setVolume(clip, volume);
+                clip.start();                 // Mulai ulang
+            } catch (Exception e) {
+                // Silent fail - audio might stutter tapi tidak crash
             }
         }
     }
