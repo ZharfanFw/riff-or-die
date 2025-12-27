@@ -10,16 +10,18 @@ import java.io.File;
 /**
  * AudioManager - Handle semua audio playback (SFX dan BGM)
  * Thread-safe sound playback dengan smart volume control (smart fallback)
- * Interrupt-based playback untuk player bullet dan amplifier hit sounds
+ * Interrupt-based playback untuk player bullet, monster hit, dan amplifier hit sounds
  */
 public class AudioManager {
     private static Clip playerShootClip;
     private static Clip monsterShootClip;
+    private static Clip monsterHitClip;
     private static Clip amplifierHitClip;
     private static Clip backgroundMusicClip;
 
     private static float playerShootVolume = 1.0f;
     private static float monsterShootVolume = 0.6f;
+    private static float monsterHitVolume = 0.7f;
     private static float amplifierHitVolume = 0.8f;
     private static float backgroundMusicVolume = 0.4f;
 
@@ -30,6 +32,7 @@ public class AudioManager {
         try {
             playerShootClip = loadAudioClip("src/assets/bullet-player-sound.wav");
             monsterShootClip = loadAudioClip("src/assets/bullet-monster-sound.wav");
+            monsterHitClip = loadAudioClip("src/assets/monster-hit-sound.wav");
             amplifierHitClip = loadAudioClip("src/assets/amplifier-hit-sound.wav");
             backgroundMusicClip = loadAudioClip("src/assets/backsound.wav");
             
@@ -62,6 +65,13 @@ public class AudioManager {
      */
     public static void playMonsterShoot() {
         playClip(monsterShootClip, monsterShootVolume);
+    }
+
+    /**
+     * Play monster hit sound effect (interrupt-based: stops previous sound and restarts)
+     */
+    public static void playMonsterHit() {
+        playClipWithInterrupt(monsterHitClip, monsterHitVolume);
     }
 
     /**
@@ -109,16 +119,26 @@ public class AudioManager {
 
     /**
      * Play clip dengan interrupt - stops and restarts sound jika already playing
-     * Used by sounds yang ingin interrupt behavior (player bullet, amplifier hit)
+     * Used by sounds yang ingin interrupt behavior (player bullet, monster hit, amplifier hit)
      * Saat di-trigger ulang sebelum sound selesai → stop sound lama + restart dari frame 0
+     * Dengan check isRunning() untuk ensure proper interrupt handling
      */
     private static void playClipWithInterrupt(Clip clip, float volume) {
         if (clip != null) {
             try {
-                clip.stop();                  // INTERRUPT: stop jika masih running
-                clip.setFramePosition(0);     // Reset ke awal
+                // Check if clip is running, jika ya maka stop dulu
+                if (clip.isRunning()) {
+                    clip.stop();
+                }
+                
+                // Reset frame position ke awal
+                clip.setFramePosition(0);
+                
+                // Set volume
                 setVolume(clip, volume);
-                clip.start();                 // Mulai ulang
+                
+                // Start sound dari frame 0
+                clip.start();
             } catch (Exception e) {
                 // Silent fail - audio might stutter tapi tidak crash
             }
@@ -180,6 +200,10 @@ public class AudioManager {
         monsterShootVolume = Math.max(0, Math.min(volume, 1.0f));
     }
 
+    public static void setMonsterHitVolume(float volume) {
+        monsterHitVolume = Math.max(0, Math.min(volume, 1.0f));
+    }
+
     public static void setAmplifierHitVolume(float volume) {
         amplifierHitVolume = Math.max(0, Math.min(volume, 1.0f));
     }
@@ -195,6 +219,7 @@ public class AudioManager {
         stopBackgroundMusic();
         if (playerShootClip != null) playerShootClip.close();
         if (monsterShootClip != null) monsterShootClip.close();
+        if (monsterHitClip != null) monsterHitClip.close();
         if (amplifierHitClip != null) amplifierHitClip.close();
         if (backgroundMusicClip != null) backgroundMusicClip.close();
         System.out.println("✅ AudioManager shutdown");

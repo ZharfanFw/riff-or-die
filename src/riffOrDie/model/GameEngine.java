@@ -376,6 +376,7 @@ public class GameEngine {
                 for (Monster monster : monsters) {
                     if (checkRectangleCollision(bullet, monster)) {
                         monster.takeDamage(1);
+                        AudioManager.playMonsterHit();
                         if (!monster.isAlive()) {
                             score += monster.getType().getScore();
                         }
