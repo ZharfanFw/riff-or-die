@@ -124,6 +124,7 @@ public class GameEngine {
     }
 
     public void update(double deltaTime) {
+        updateWaveBasedOnScore();
         // Update player with collision detection against amplifiers
         updatePlayerWithCollisions(deltaTime);
 
@@ -162,6 +163,29 @@ public class GameEngine {
         bullets.removeAll(inactiveBullets);
     }
 
+
+    /**
+     * Update wave berdasarkan score saat ini
+     * Score 0-2499: Wave 0 (spawn 6s)
+     * Score 2500-5499: Wave 1 (spawn 5s)
+     * Score 5500-7999: Wave 2 (spawn 4s)
+     * Score 8000+: Wave 3 (spawn 3s)
+     */
+    private void updateWaveBasedOnScore() {
+        if (score < GameConstants.WAVE_0_MAX_SCORE) {
+            currentWave = 0;
+            spawnInterval = GameConstants.WAVE_0_SPAWN_RATE;
+        } else if (score < GameConstants.WAVE_1_MAX_SCORE) {
+            currentWave = 1;
+            spawnInterval = GameConstants.WAVE_1_SPAWN_RATE;
+        } else if (score < GameConstants.WAVE_2_MAX_SCORE) {
+            currentWave = 2;
+            spawnInterval = GameConstants.WAVE_2_SPAWN_RATE;
+        } else {
+            currentWave = 3;
+            spawnInterval = GameConstants.WAVE_3_SPAWN_RATE;
+        }
+    }
     private void spawnMonsters() {
         long currentTime = System.currentTimeMillis();
 
@@ -203,7 +227,6 @@ public class GameEngine {
                 }
             }
 
-            spawnInterval = Math.max(500, GameConstants.BASE_SPAWN_RATE - (score / 1000) * 100);
         }
     }
 
