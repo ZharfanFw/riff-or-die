@@ -1,17 +1,53 @@
 package riffOrDie.presenter;
 
 /**
- * GAMEPRESENTER - Bridge GameEngine <-> GamePanel
+ * GamePresenter - Orchestrator antara GamePanel (View) dan GameEngine (Model)
  * 
- * Fungsi:
- * - Store reference ke GameEngine & GamePanel
- * - playerMove() - Delegate movement ke engine
- * - playerShoot() - Delegate shooting ke engine + play audio
- * - update() - Update engine + update view
- * - returnToMenu() - Cleanup + save score + show dialog
- * - endGame() - Show game over dialog
+ * Fungsi Utama:
+ * - Menerima user input dari GamePanel/InputHandler
+ * - Delegate action ke GameEngine (model)
+ * - Update GamePanel dengan state terbaru setiap frame
+ * - Handle game over: save score ke database, show dialog
+ * - Trigger SFX saat event tertentu via AudioManager
  * 
- * Penting: ALL user actions go through presenter!
+ * Key Methods:
+ * - startGame(username, sisaPeluru): Initialize game dengan player name
+ * - playerMove(directionX, directionY): Handle arrow key input
+ * - playerShoot(): Handle Z key input untuk menembak
+ * - update(deltaTime): Main game loop - update engine + view
+ * - returnToMenu(): Cleanup saat player press SPACE atau game over
+ * - endGame(): Show game over dialog dan simpan score
+ * 
+ * MVP Pattern Implementation:
+ * - Presenter orchestrate business logic flow
+ * - NOT handle rendering (GamePanel/GameRenderer job)
+ * - NOT handle collision/physics (GameEngine job)
+ * - Bridge antara view dan model dengan loose coupling
+ * 
+ * Game Flow:
+ * 1. MenuPresenter → startGame(username, sisaPeluru)
+ * 2. GamePresenter create GameEngine instance
+ * 3. GamePanel game loop call presenter.update(deltaTime)
+ * 4. Presenter call gameEngine.update() & gameEngine.updateMonsterShooting()
+ * 5. Presenter check gameEngine.isGameOver()
+ * 6. If game over → endGame() → save score → show dialog
+ * 
+ * Update Flow Per Frame:
+ * - Update game engine state (movement, shooting, collision)
+ * - Update monster AI (shooting logic)
+ * - Check win/lose conditions
+ * - Update view dengan entity positions dan score
+ * 
+ * Audio Triggers:
+ * - Player shoot: AudioManager.playPlayerShoot()
+ * - Monster hit: AudioManager.playMonsterHit()
+ * - Amplifier hit: AudioManager.playAmplifierHit()
+ * 
+ * State Management:
+ * - gameEngine: Model yang hold game state
+ * - view: Reference ke IGameView (GamePanel)
+ * - gameOver: Flag untuk track game over state
+ * - username, startingSisaPeluru: Player session data
  */
 import riffOrDie.model.DatabaseManager;
 import riffOrDie.model.GameEngine;

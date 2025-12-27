@@ -1,21 +1,45 @@
 package riffOrDie.presenter;
 
 /**
- * AUDIOMANAGER - Centralized audio management
+ * AudioManager - Centralized audio management untuk game
  * 
- * Fungsi:
- * - Load semua WAV files di initialize()
- * - playPlayerShoot() - Player bullet sound (overlap)
- * - playMonsterHit() - Monster hit sound (overlap)
- * - playMonsterShoot() - Monster shoot sound (overlap)
- * - playAmplifierHit() - Amplifier hit sound (interrupt)
- * - playBackgroundMusic() - BGM loop
- * - Smart volume control (fallback MASTER_GAIN -> VOLUME)
+ * Fungsi Utama:
+ * - Load dan manage semua WAV files pada initialization
+ * - Provide interface untuk play SFX (Sound Effects) dan BGM (Background Music)
+ * - Handle overlap playback untuk sound yang bisa dimainkan bersamaan
+ * - Handle interrupt playback untuk sound yang exclusive (hanya satu instance)
  * 
- * Audio Behavior:
- * - Player bullet & monster hit: Overlap (multiple simultaneous)
- * - Amplifier hit: Interrupt (single instance)
- * - Monster shoot: Overlap
+ * Methods:
+ * - initialize(): Load semua audio files dari assets directory
+ * - playPlayerShoot(): Play sound saat player menembak (overlap - bisa simultaneous)
+ * - playMonsterHit(): Play sound saat monster kena tembak (overlap - bisa simultaneous)
+ * - playMonsterShoot(): Play sound saat monster menembak (overlap - bisa simultaneous)
+ * - playAmplifierHit(): Play sound saat amplifier kena tembak (interrupt - single instance)
+ * - playBackgroundMusic(): Play BGM loop selama gameplay
+ * - setVolume(type, volume): Set volume untuk specific sound type
+ * - stopAllSounds(): Hentikan semua audio playback
+ * 
+ * Audio Behavior & Volume Strategy:
+ * - Player Shoot: 1.0f volume, overlap (multiple shots same time)
+ * - Monster Shoot: 0.6f volume, overlap (multiple monsters)
+ * - Monster Hit: 0.7f volume, overlap (multiple hits)
+ * - Amplifier Hit: 0.8f volume, interrupt (one at a time)
+ * - Background Music: 0.4f volume, continuous loop
+ * 
+ * Volume Control Fallback:
+ * - Coba gunakan MASTER_GAIN control untuk universal volume
+ * - Fallback ke VOLUME control jika MASTER_GAIN tidak tersedia
+ * - Graceful handling jika volume control tidak supported
+ * 
+ * Threading:
+ * - Static instance untuk global audio access
+ * - Audio playback di Thread terpisah (non-blocking)
+ * - Thread-safe untuk concurrent sound playback
+ * 
+ * Asset Path:
+ * - Semua audio files di src/assets/ directory
+ * - Format: WAV (compatible dengan Java AudioSystem)
+ * - Fallback: Error message jika file missing, game continue tanpa audio
  */
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
