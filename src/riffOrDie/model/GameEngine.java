@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import riffOrDie.presenter.util.AudioManager;
 import riffOrDie.config.GameConstants;
 
 public class GameEngine {
@@ -375,6 +376,7 @@ public class GameEngine {
                 for (Monster monster : monsters) {
                     if (checkRectangleCollision(bullet, monster)) {
                         monster.takeDamage(1);
+                        AudioManager.playMonsterHit();
                         if (!monster.isAlive()) {
                             score += monster.getType().getScore();
                         }
@@ -394,6 +396,7 @@ public class GameEngine {
                 for (Amplifier amplifier : amplifiers) {
                     if (amplifier.collidesWith(bullet)) {
                         amplifier.takeDamage(1);
+                        AudioManager.playAmplifierHit();
                         bulletsMissed++;
                         bulletsToRemove.add(bullet);
                         break;
@@ -533,6 +536,11 @@ public class GameEngine {
                 Bullet bullet = new Bullet(centerX, centerY, false);
                 bullet.setVelocity(velocityX, velocityY);
                 bullets.add(bullet);
+
+                // Play monster shoot sound with frequency control (30% chance)
+                if (random.nextInt(100) < GameConstants.AUDIO_MONSTER_SHOOT_FREQUENCY) {
+                    AudioManager.playMonsterShoot();
+                }
 
                 monster.resetShootCooldown();
             }

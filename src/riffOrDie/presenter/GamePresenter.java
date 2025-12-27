@@ -3,6 +3,7 @@ package riffOrDie.presenter;
 import riffOrDie.model.database.DatabaseManager;
 import riffOrDie.model.GameEngine;
 import riffOrDie.model.GameScore;
+import riffOrDie.presenter.util.AudioManager;
 
 /**
  * GamePresenter - orchestrate game logic
@@ -74,6 +75,7 @@ public class GamePresenter implements IGamePresenter {
         if (gameEngine.getPlayer().getAmmo() > 0) {
             gameEngine.getPlayer().useAmmo();
             gameEngine.playerShoot();
+            AudioManager.playPlayerShoot();
             view.updateAmmo(gameEngine.getPlayer().getAmmo(), gameEngine.getBulletsMissed());
         }
     }

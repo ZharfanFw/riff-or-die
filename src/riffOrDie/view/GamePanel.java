@@ -1,4 +1,5 @@
 package riffOrDie.view;
+import riffOrDie.presenter.util.AudioManager;
 
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
@@ -64,6 +65,10 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
 
         // Start game
         presenter.startGame(username, sisaPeluru);
+
+        // Initialize audio system
+        AudioManager.initialize();
+        AudioManager.playBackgroundMusic();
 
         // Start game loop
         gameThread = new Thread(this);
@@ -253,6 +258,11 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     public void showGameOverDialog(int finalScore) {
         // Stop game loop
         isRunning = false;
+        
+        // Stop background music
+        AudioManager.stopBackgroundMusic();
+        // Stop background music
+        AudioManager.stopBackgroundMusic();
 
         // Show blocking JOptionPane dialog
         JOptionPane.showMessageDialog(
