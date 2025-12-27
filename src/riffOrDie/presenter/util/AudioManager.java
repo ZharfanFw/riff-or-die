@@ -3,12 +3,13 @@ package riffOrDie.presenter.util;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.Control;
 import javax.sound.sampled.FloatControl;
 import java.io.File;
 
 /**
  * AudioManager - Handle semua audio playback (SFX dan BGM)
- * Thread-safe sound playback dengan volume control
+ * Thread-safe sound playback dengan smart volume control (smart fallback)
  */
 public class AudioManager {
     private static Clip playerShootClip;
@@ -105,21 +106,47 @@ public class AudioManager {
     }
 
     /**
+     * Get first available FloatControl from clip (smart fallback)
+     * Try MASTER_GAIN first, fallback to VOLUME if unavailable
+     * Return null if no control available (graceful degradation)
+     */
+    private static FloatControl getAvailableControl(Clip clip, Control.Type... types) {
+        if (clip == null) return null;
+        for (Control.Type type : types) {
+            try {
+                return (FloatControl) clip.getControl(type);
+            } catch (IllegalArgumentException e) {
+                // Control not available, try next
+            }
+        }
+        return null;
+    }
+
+    /**
      * Set volume untuk clip (0.0 = mute, 1.0 = max)
+     * Smart fallback: try MASTER_GAIN first, fallback to VOLUME
+     * If no control available, audio still plays at system volume
      */
     private static void setVolume(Clip clip, float volume) {
-        if (clip != null) {
+        if (clip == null) return;
+        
+        FloatControl control = getAvailableControl(clip, 
+            FloatControl.Type.MASTER_GAIN, 
+            FloatControl.Type.VOLUME
+        );
+        
+        if (control != null) {
             try {
-                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
                 // dB = 20 * log10(volume)
                 // Range: -80dB (silent) to 0dB (max)
                 float dB = (float) (20 * Math.log10(Math.max(volume, 0.0001)));
                 dB = Math.min(dB, 0); // Cap at 0dB
-                gainControl.setValue(dB);
+                control.setValue(dB);
             } catch (Exception e) {
-                System.err.println("Error setting volume: " + e.getMessage());
+                // Silent fail - audio still plays without volume control
             }
         }
+        // If no control available, audio plays at system volume (graceful degradation)
     }
 
     /**
