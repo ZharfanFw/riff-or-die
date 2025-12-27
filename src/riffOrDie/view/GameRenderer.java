@@ -1,4 +1,4 @@
-package riffOrDie.view.renderer;
+package riffOrDie.view;
 
 /**
  * GAMERENDERER - Static drawing utilities
@@ -27,7 +27,7 @@ import riffOrDie.model.GameEngine;
 import riffOrDie.model.Monster;
 import riffOrDie.model.MonsterType;
 import riffOrDie.model.Player;
-import riffOrDie.presenter.util.ImageLoader;
+import riffOrDie.presenter.ImageLoader;
 import riffOrDie.config.GameConstants;
 
 public class GameRenderer {

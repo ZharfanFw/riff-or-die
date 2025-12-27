@@ -1,4 +1,4 @@
-package riffOrDie.model.database;
+package riffOrDie.model;
 
 /**
  * DATABASEMANAGER - Database CRUD operations

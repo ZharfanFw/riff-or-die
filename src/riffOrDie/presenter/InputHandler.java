@@ -1,4 +1,4 @@
-package riffOrDie.presenter.util;
+package riffOrDie.presenter;
 
 /**
  * INPUTHANDLER - Keyboard input handling

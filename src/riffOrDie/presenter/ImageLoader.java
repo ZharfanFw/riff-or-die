@@ -1,4 +1,4 @@
-package riffOrDie.presenter.util;
+package riffOrDie.presenter;
 
 /**
  * IMAGELOADER - Load PNG assets

@@ -1,6 +1,6 @@
 package riffOrDie.view;
 
-import riffOrDie.presenter.util.AudioManager;
+import riffOrDie.presenter.AudioManager;
 
 /**
  * GAMEPANEL - Game rendering & input
@@ -26,8 +26,8 @@ import java.awt.Color;
 import java.awt.event.KeyListener;
 import java.util.List;
 
-import riffOrDie.presenter.util.InputHandler;
-import riffOrDie.view.renderer.GameRenderer;
+import riffOrDie.presenter.InputHandler;
+import riffOrDie.view.GameRenderer;
 import riffOrDie.model.Amplifier;
 import riffOrDie.model.Bullet;
 import riffOrDie.model.Monster;

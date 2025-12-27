@@ -12,7 +12,7 @@ package riffOrDie.presenter;
  */
 import java.util.List;
 
-import riffOrDie.model.database.DatabaseManager;
+import riffOrDie.model.DatabaseManager;
 import riffOrDie.model.GameScore;
 import riffOrDie.view.MenuPanel;
 

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import riffOrDie.presenter.util.AudioManager;
+import riffOrDie.presenter.AudioManager;
 import riffOrDie.config.GameConstants;
 
 public class GameEngine {

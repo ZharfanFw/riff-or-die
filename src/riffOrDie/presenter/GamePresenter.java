@@ -13,10 +13,10 @@ package riffOrDie.presenter;
  * 
  * Penting: ALL user actions go through presenter!
  */
-import riffOrDie.model.database.DatabaseManager;
+import riffOrDie.model.DatabaseManager;
 import riffOrDie.model.GameEngine;
 import riffOrDie.model.GameScore;
-import riffOrDie.presenter.util.AudioManager;
+import riffOrDie.presenter.AudioManager;
 
 /**
  * GamePresenter - orchestrate game logic
