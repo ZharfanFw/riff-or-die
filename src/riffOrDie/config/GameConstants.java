@@ -69,7 +69,7 @@ public class GameConstants {
 
     // HUD Setting
     public static final int WAVE_HUD_X = 700;
-    public static final int WAVE_HUD_Y = 30;
+    public static final int WAVE_HUD_Y = 40;
 
     // Audio Setting
     public static final String AUDIO_PLAYER_SHOOT = "src/assets/bullet-player-sound.wav";
