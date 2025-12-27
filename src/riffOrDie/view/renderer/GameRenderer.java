@@ -143,13 +143,13 @@ public class GameRenderer {
             Color fallbackColor;
             
             if (bullet.isPlayerBullet()) {
-                bulletWidth = 18;  // Player bullet original size
-                bulletHeight = 6;
+                bulletWidth = 36;  // Player bullet 2x scaled
+                bulletHeight = 12;
                 bulletImage = playerBulletImage;
                 fallbackColor = new Color(0, 100, 255);  // Blue fallback
             } else {
-                bulletWidth = 11;  // Monster bullet original size
-                bulletHeight = 8;
+                bulletWidth = 22;  // Monster bullet 2x scaled
+                bulletHeight = 16;
                 bulletImage = monsterBulletImage;
                 fallbackColor = new Color(255, 165, 0);  // Orange fallback
             }
