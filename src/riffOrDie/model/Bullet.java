@@ -73,4 +73,20 @@ public class Bullet {
     public double getSpeed() {
         return speed;
     }
+
+    public double getVelocityX() {
+        return velocityX;
+    }
+
+    public double getVelocityY() {
+        return velocityY;
+    }
+
+    /**
+     * Hitung angle rotasi bullet berdasarkan arah pergerakan
+     * Returns angle dalam radians untuk AffineTransform rotation
+     */
+    public double getAngle() {
+        return Math.atan2(velocityY, velocityX);
+    }
 }
