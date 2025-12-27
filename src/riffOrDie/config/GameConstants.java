@@ -31,22 +31,35 @@ public class GameConstants {
     public static final int AMPLIFIER_SPAWN_Y_MIN = 200; // amplifier spawn Y range min
     public static final int AMPLIFIER_SPAWN_Y_MAX = 400; // amplifier spawn Y range max
 
-    // Monster Spawn Setting
-    public static final int MONSTER_SPAWN_Y_MIN = 300; // monster spawn Y range min
-    public static final int MONSTER_SPAWN_Y_MAX = 544; // monster spawn Y range max (600 - 56 height)
+    // Bullet Setting
+    public static final int BULLET_WIDTH = 5;
+    public static final int BULLET_HEIGHT = 10;
 
-    // Spawning Setting
-    public static final long BASE_SPAWN_RATE = 5000; // 5 seconds (old default)
+    // Monster Easy
+    public static final int MONSTER_EASY_WIDTH = 36;
+    public static final int MONSTER_EASY_HEIGHT = 56;
+    public static final int MONSTER_EASY_HEALTH = 1;
+    public static final int MONSTER_EASY_SCORE = 100;
+
+    // Monster Hard
+    public static final int MONSTER_HARD_WIDTH = 58;
+    public static final int MONSTER_HARD_HEIGHT = 56;
+    public static final int MONSTER_HARD_HEALTH = 2;
+    public static final int MONSTER_HARD_SCORE = 200;
+
+    // Monster Spawn Setting
+    public static final int MONSTER_SPAWN_Y_MIN = 300;
+    public static final int MONSTER_SPAWN_Y_MAX = 544; // 600 - 56 (monster height)
 
     // Wave System Setting - Score Thresholds
     public static final int WAVE_0_MAX_SCORE = 2500;
     public static final int WAVE_1_MAX_SCORE = 5500;
     public static final int WAVE_2_MAX_SCORE = 8000;
-    // Wave 3 starts at 8000+
 
     // Wave System Setting - Spawn Rates
     public static final long WAVE_0_SPAWN_RATE = 6000; // 6 seconds
     public static final long WAVE_1_SPAWN_RATE = 5000; // 5 seconds
+    public static final long BASE_SPAWN_RATE = 5000; // 5 seconds (old default)
     public static final long WAVE_2_SPAWN_RATE = 4000; // 4 seconds
     public static final long WAVE_3_SPAWN_RATE = 3000; // 3 seconds
 
@@ -57,6 +70,17 @@ public class GameConstants {
     // HUD Setting
     public static final int WAVE_HUD_X = 700;
     public static final int WAVE_HUD_Y = 30;
+
+    // Audio Setting
+    public static final String AUDIO_PLAYER_SHOOT = "src/assets/bullet-player-sound.wav";
+    public static final String AUDIO_MONSTER_SHOOT = "src/assets/bullet-monster-sound.wav";
+    public static final String AUDIO_AMPLIFIER_HIT = "src/assets/amplifier-hit-sound.wav";
+    public static final String AUDIO_BACKGROUND_MUSIC = "src/assets/backsound.wav";
+    public static final float AUDIO_PLAYER_SHOOT_VOLUME = 1.0f;
+    public static final float AUDIO_MONSTER_SHOOT_VOLUME = 0.5f;
+    public static final float AUDIO_AMPLIFIER_HIT_VOLUME = 0.8f;
+    public static final float AUDIO_BACKGROUND_MUSIC_VOLUME = 0.4f;
+    public static final int AUDIO_MONSTER_SHOOT_FREQUENCY = 30; // 30% chance untuk play sound
 
     // Database Setting
     public static final String DB_URL = "jdbc:mysql://localhost:3306/riffordie";
