@@ -115,6 +115,7 @@ public class GamePresenter implements IGamePresenter {
         view.updateScore(gameEngine.getScore());
         view.updateHealth(gameEngine.getPlayer().getHealth());
         view.updateAmmo(gameEngine.getPlayer().getAmmo(), gameEngine.getBulletsMissed());
+        view.updateWave(gameEngine.getCurrentWave());
         
         // Update entities
         view.updateMonsters(gameEngine.getMonsters());

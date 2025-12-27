@@ -37,6 +37,14 @@ public class GameConstants {
     // Spawning Setting
     public static final long BASE_SPAWN_RATE = 5000; // 4 seconds // milisecond
 
+    // Wave System Setting
+    public static final int MONSTERS_PER_WAVE = 5; // number of monsters per wave
+
+    // HUD Setting
+    public static final int WAVE_HUD_X = 700;
+    public static final int WAVE_HUD_Y = 30;
+    public static final long WAVE_INTERVAL = 30000; // 30 seconds to clear wave // milisecond
+
     // Database Setting
     public static final String DB_URL = "jdbc:mysql://localhost:3306/riffordie";
     public static final String DB_USER = "root";

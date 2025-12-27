@@ -22,7 +22,7 @@ public class GameEngine {
     private long lastUpdateTime;
     private long lastAmplifierRegenerateTime;
     private Random random;
-
+    private int currentWave;
     public GameEngine(String username, int startingSisaPeluru) {
         this.currentUsername = username;
 
@@ -44,6 +44,8 @@ public class GameEngine {
         this.lastUpdateTime = System.currentTimeMillis();
         this.spawnInterval = GameConstants.BASE_SPAWN_RATE;
         this.random = new Random();
+        this.currentWave = 1;
+        this.lastAmplifierRegenerateTime = System.currentTimeMillis();
 
         initializeAmplifiers();
     }
@@ -540,5 +542,9 @@ public class GameEngine {
 
     public String getCurrentUsername() {
         return currentUsername;
+    }
+
+    public int getCurrentWave() {
+        return currentWave;
     }
 }

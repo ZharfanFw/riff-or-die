@@ -48,6 +48,10 @@ public interface IGameView {
      * Update amplifiers list untuk rendering
      */
     void updateAmplifiers(List<Amplifier> amplifiers);
+    /**
+     * Update wave counter display
+     */
+    void updateWave(int waveNumber);
 
     /**
      * Show game over dialog (blocking)

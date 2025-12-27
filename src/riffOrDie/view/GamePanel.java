@@ -37,6 +37,7 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     private int health;
     private int currentAmmo = 0;
     private int bulletsMissed = 0;
+    private int currentWave = 0;
 
     private Thread gameThread;
     private volatile boolean isRunning;
@@ -133,6 +134,8 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         // Draw enemies count (kanan atas)
         if (monsters != null) {
             g2d.drawString("Enemies: " + monsters.size(), 700, 20);
+
+            g2d.drawString("Wave: " + currentWave, GameConstants.WAVE_HUD_X, GameConstants.WAVE_HUD_Y);
         }
     }
 
@@ -171,12 +174,17 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         // Optional: display bullets fired info
     }
 
+
     @Override
     public void updateAmmo(int ammoCount, int bulletsMissed) {
         this.currentAmmo = ammoCount;
         this.bulletsMissed = bulletsMissed;
     }
 
+    @Override
+    public void updateWave(int waveNumber) {
+        this.currentWave = waveNumber;
+    }
     @Override
     public void updateMonsters(List<Monster> monsters) {
         this.monsters = monsters;
