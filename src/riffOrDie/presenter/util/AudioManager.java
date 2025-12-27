@@ -10,7 +10,8 @@ import java.io.File;
 /**
  * AudioManager - Handle semua audio playback (SFX dan BGM)
  * Thread-safe sound playback dengan smart volume control (smart fallback)
- * Interrupt-based playback untuk player bullet, monster hit, dan amplifier hit sounds
+ * Overlap-based playback untuk player bullet dan monster hit sounds
+ * Interrupt-based playback untuk amplifier hit sound
  */
 public class AudioManager {
     private static Clip playerShootClip;
@@ -54,24 +55,24 @@ public class AudioManager {
     }
 
     /**
-     * Play player shoot sound effect (interrupt-based: stops previous sound and restarts)
+     * Play player shoot sound effect (overlap-based: multiple sounds can play simultaneously)
      */
     public static void playPlayerShoot() {
-        playClipWithInterrupt(playerShootClip, playerShootVolume);
+        playClip(playerShootClip, playerShootVolume);
     }
 
     /**
-     * Play monster shoot sound effect (default behavior: allows overlap)
+     * Play monster shoot sound effect (overlap-based: allows overlap)
      */
     public static void playMonsterShoot() {
         playClip(monsterShootClip, monsterShootVolume);
     }
 
     /**
-     * Play monster hit sound effect (interrupt-based: stops previous sound and restarts)
+     * Play monster hit sound effect (overlap-based: multiple sounds can play simultaneously)
      */
     public static void playMonsterHit() {
-        playClipWithInterrupt(monsterHitClip, monsterHitVolume);
+        playClip(monsterHitClip, monsterHitVolume);
     }
 
     /**
@@ -102,8 +103,9 @@ public class AudioManager {
     }
 
     /**
-     * Play clip (SFX) tanpa looping - default behavior
-     * Used by sounds that should allow overlap (e.g., monster shoot)
+     * Play clip (SFX) tanpa looping - overlap-based behavior
+     * Used by sounds that should allow multiple instances to play (player bullet, monster shoot, monster hit)
+     * Multiple triggers = multiple sounds playing simultaneously
      */
     private static void playClip(Clip clip, float volume) {
         if (clip != null) {
@@ -119,9 +121,8 @@ public class AudioManager {
 
     /**
      * Play clip dengan interrupt - stops and restarts sound jika already playing
-     * Used by sounds yang ingin interrupt behavior (player bullet, monster hit, amplifier hit)
+     * Used by sounds yang ingin interrupt behavior (amplifier hit only)
      * Saat di-trigger ulang sebelum sound selesai → stop sound lama + restart dari frame 0
-     * Dengan check isRunning() untuk ensure proper interrupt handling
      */
     private static void playClipWithInterrupt(Clip clip, float volume) {
         if (clip != null) {
