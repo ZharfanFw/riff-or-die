@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
 import java.util.List;
 
 import riffOrDie.model.Amplifier;
@@ -20,12 +21,16 @@ public class GameRenderer {
     public static Image monsterEasyImage;
     public static Image monsterHardImage;
     public static Image amplifierImage;
+    public static Image playerBulletImage;
+    public static Image monsterBulletImage;
     
     static {
         playerImage = ImageLoader.loadImage("src/assets/player.png");
         monsterEasyImage = ImageLoader.loadImage("src/assets/monster-easy.png");
         monsterHardImage = ImageLoader.loadImage("src/assets/monster-hard.png");
         amplifierImage = ImageLoader.loadImage("src/assets/amplifier.png");
+        playerBulletImage = ImageLoader.loadImage("src/assets/bullet-player.png");
+        monsterBulletImage = ImageLoader.loadImage("src/assets/bullet-monster.png");
     }
 
     public static void render(Graphics2D g2d, GameEngine gameEngine) {
@@ -129,15 +134,49 @@ public class GameRenderer {
 
     private static void drawBullets(Graphics2D g2d, List<Bullet> bullets) {
         for (Bullet bullet : bullets) {
+            double angle = bullet.getAngle(); // angle dalam radians
+            
+            // Tentukan ukuran dan image berdasarkan tipe bullet
+            int bulletWidth;
+            int bulletHeight;
+            Image bulletImage;
+            Color fallbackColor;
+            
             if (bullet.isPlayerBullet()) {
-                // Player bullet - blue sound wave
-                g2d.setColor(new Color(0, 100, 255));
+                bulletWidth = 18;  // Player bullet original size
+                bulletHeight = 6;
+                bulletImage = playerBulletImage;
+                fallbackColor = new Color(0, 100, 255);  // Blue fallback
             } else {
-                // Monster bullet - orange sound wave
-                g2d.setColor(new Color(255, 165, 0));
+                bulletWidth = 11;  // Monster bullet original size
+                bulletHeight = 8;
+                bulletImage = monsterBulletImage;
+                fallbackColor = new Color(255, 165, 0);  // Orange fallback
             }
-
-            drawSoundWave(g2d, bullet.getX(), bullet.getY(), bullet.isPlayerBullet());
+            
+            // Save current transform
+            AffineTransform oldTransform = g2d.getTransform();
+            
+            // Calculate center point untuk rotation
+            int centerX = bullet.getX() + (bulletWidth / 2);
+            int centerY = bullet.getY() + (bulletHeight / 2);
+            
+            // Apply transformation: translate -> rotate -> translate back
+            g2d.translate(centerX, centerY);
+            g2d.rotate(angle);
+            g2d.translate(-centerX, -centerY);
+            
+            // Draw bullet image atau fallback
+            if (bulletImage != null) {
+                g2d.drawImage(bulletImage, bullet.getX(), bullet.getY(), bulletWidth, bulletHeight, null);
+            } else {
+                // Fallback: colored rectangle
+                g2d.setColor(fallbackColor);
+                g2d.fillRect(bullet.getX(), bullet.getY(), bulletWidth, bulletHeight);
+            }
+            
+            // Restore original transform
+            g2d.setTransform(oldTransform);
         }
     }
 
