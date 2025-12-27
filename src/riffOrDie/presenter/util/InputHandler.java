@@ -1,6 +1,5 @@
 package riffOrDie.presenter.util;
 
-
 /**
  * INPUTHANDLER - Keyboard input handling
  * 

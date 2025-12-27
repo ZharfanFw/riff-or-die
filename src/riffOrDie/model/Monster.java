@@ -1,6 +1,5 @@
 package riffOrDie.model;
 
-
 /**
  * MONSTER - Entity musuh
  * 
@@ -101,6 +100,7 @@ public class Monster {
     public int getCenterY() {
         return y;
     }
+
     public void resetShootCooldown() {
         this.lastShootTime = System.currentTimeMillis();
     }

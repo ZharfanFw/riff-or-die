@@ -1,6 +1,5 @@
 package riffOrDie.model;
 
-
 /**
  * PLAYER - Entity pemain
  * 

@@ -1,6 +1,5 @@
 package riffOrDie.view.renderer;
 
-
 /**
  * GAMERENDERER - Static drawing utilities
  * 
@@ -38,7 +37,7 @@ public class GameRenderer {
     public static Image amplifierImage;
     public static Image playerBulletImage;
     public static Image monsterBulletImage;
-    
+
     static {
         playerImage = ImageLoader.loadImage("src/assets/player.png");
         monsterEasyImage = ImageLoader.loadImage("src/assets/monster-easy.png");
@@ -84,24 +83,22 @@ public class GameRenderer {
             if (amplifierImage != null) {
                 // Draw amplifier image
                 g2d.drawImage(
-                    amplifierImage,
-                    amp.getX(),
-                    amp.getY(),
-                    amp.getWidth(),
-                    amp.getHeight(),
-                    null
-                );
+                        amplifierImage,
+                        amp.getX(),
+                        amp.getY(),
+                        amp.getWidth(),
+                        amp.getHeight(),
+                        null);
             } else {
                 // Fallback: black rectangle
                 g2d.setColor(Color.BLACK);
                 g2d.fillRect(
-                    amp.getX(),
-                    amp.getY(),
-                    amp.getWidth(),
-                    amp.getHeight()
-                );
+                        amp.getX(),
+                        amp.getY(),
+                        amp.getWidth(),
+                        amp.getHeight());
             }
-            
+
             // Draw health display
             drawAmplifierHealth(g2d, amp);
         }
@@ -109,40 +106,36 @@ public class GameRenderer {
 
     private static void drawMonsters(Graphics2D g2d, List<Monster> monsters) {
         for (Monster monster : monsters) {
-            Image image = monster.getType() == MonsterType.EASY ? 
-                          monsterEasyImage : monsterHardImage;
-            
+            Image image = monster.getType() == MonsterType.EASY ? monsterEasyImage : monsterHardImage;
+
             if (image != null) {
                 // Draw monster image
                 g2d.drawImage(
-                    image,
-                    monster.getX(),
-                    monster.getY(),
-                    monster.getWidth(),
-                    monster.getHeight(),
-                    null
-                );
+                        image,
+                        monster.getX(),
+                        monster.getY(),
+                        monster.getWidth(),
+                        monster.getHeight(),
+                        null);
             } else {
                 // Fallback: black rectangle
                 g2d.setColor(Color.BLACK);
                 g2d.fillRect(
-                    monster.getX(),
-                    monster.getY(),
-                    monster.getWidth(),
-                    monster.getHeight()
-                );
+                        monster.getX(),
+                        monster.getY(),
+                        monster.getWidth(),
+                        monster.getHeight());
             }
-            
+
             // Draw health bar only when damaged
             if (monster.getHealth() < monster.getType().getHealth()) {
                 drawHealthBar(
-                    g2d,
-                    monster.getX(),
-                    monster.getY() - 8,
-                    monster.getWidth(),
-                    monster.getHealth(),
-                    monster.getType().getHealth()
-                );
+                        g2d,
+                        monster.getX(),
+                        monster.getY() - 8,
+                        monster.getWidth(),
+                        monster.getHealth(),
+                        monster.getType().getHealth());
             }
         }
     }
@@ -150,37 +143,37 @@ public class GameRenderer {
     private static void drawBullets(Graphics2D g2d, List<Bullet> bullets) {
         for (Bullet bullet : bullets) {
             double angle = bullet.getAngle(); // angle dalam radians
-            
+
             // Tentukan ukuran dan image berdasarkan tipe bullet
             int bulletWidth;
             int bulletHeight;
             Image bulletImage;
             Color fallbackColor;
-            
+
             if (bullet.isPlayerBullet()) {
-                bulletWidth = 36;  // Player bullet 2x scaled
+                bulletWidth = 36; // Player bullet 2x scaled
                 bulletHeight = 12;
                 bulletImage = playerBulletImage;
-                fallbackColor = new Color(0, 100, 255);  // Blue fallback
+                fallbackColor = new Color(0, 100, 255); // Blue fallback
             } else {
-                bulletWidth = 22;  // Monster bullet 2x scaled
+                bulletWidth = 22; // Monster bullet 2x scaled
                 bulletHeight = 16;
                 bulletImage = monsterBulletImage;
-                fallbackColor = new Color(255, 165, 0);  // Orange fallback
+                fallbackColor = new Color(255, 165, 0); // Orange fallback
             }
-            
+
             // Save current transform
             AffineTransform oldTransform = g2d.getTransform();
-            
+
             // Calculate center point untuk rotation
             int centerX = bullet.getX() + (bulletWidth / 2);
             int centerY = bullet.getY() + (bulletHeight / 2);
-            
+
             // Apply transformation: translate -> rotate -> translate back
             g2d.translate(centerX, centerY);
             g2d.rotate(angle);
             g2d.translate(-centerX, -centerY);
-            
+
             // Draw bullet image atau fallback
             if (bulletImage != null) {
                 g2d.drawImage(bulletImage, bullet.getX(), bullet.getY(), bulletWidth, bulletHeight, null);
@@ -189,7 +182,7 @@ public class GameRenderer {
                 g2d.setColor(fallbackColor);
                 g2d.fillRect(bullet.getX(), bullet.getY(), bulletWidth, bulletHeight);
             }
-            
+
             // Restore original transform
             g2d.setTransform(oldTransform);
         }
@@ -233,18 +226,17 @@ public class GameRenderer {
         g2d.drawString("Enemies: " + gameEngine.getMonsters().size(), GameConstants.SCREEN_WIDTH - 150, 20);
     }
 
-
     /**
      * Draw amplifier health number in center
      */
     private static void drawAmplifierHealth(Graphics2D g2d, Amplifier amplifier) {
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.BOLD, 14));
-        
+
         String healthText = String.valueOf(amplifier.getHealth());
         int textX = amplifier.getX() + (amplifier.getWidth() / 2) - 4;
         int textY = amplifier.getY() + (amplifier.getHeight() / 2) + 5;
-        
+
         g2d.drawString(healthText, textX, textY);
     }
 
@@ -266,7 +258,7 @@ public class GameRenderer {
 
     private static void drawSoundWave(Graphics2D g2d, int x, int y, boolean isPlayerBullet) {
         // Draw concentric circles to represent sound wave
-        int[] radiuses = {3, 6, 9};
+        int[] radiuses = { 3, 6, 9 };
         for (int radius : radiuses) {
             g2d.drawOval(x - radius, y - radius, radius * 2, radius * 2);
         }

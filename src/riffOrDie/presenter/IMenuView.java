@@ -1,6 +1,5 @@
 package riffOrDie.presenter;
 
-
 /**
  * IMENUVIEW - Interface kontrak MenuPanel
  * 

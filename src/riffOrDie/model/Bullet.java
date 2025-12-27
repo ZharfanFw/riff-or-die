@@ -1,6 +1,5 @@
 package riffOrDie.model;
 
-
 /**
  * BULLET - Entity proyektil
  * 
@@ -49,17 +48,17 @@ public class Bullet {
 
     public void update(double deltaTime) {
         if (isPlayerBullet) {
-            y += (int)(speed * deltaTime);
+            y += (int) (speed * deltaTime);
         } else {
             // Monster bullet moves with velocity (smooth lerp towards player)
-            x += (int)(velocityX * speed * deltaTime);
-            y += (int)(velocityY * speed * deltaTime);
+            x += (int) (velocityX * speed * deltaTime);
+            y += (int) (velocityY * speed * deltaTime);
         }
     }
 
     public boolean isActive() {
         return y > -height && y < GameConstants.SCREEN_HEIGHT + height &&
-               x > -width && x < GameConstants.SCREEN_WIDTH + width;
+                x > -width && x < GameConstants.SCREEN_WIDTH + width;
     }
 
     public boolean isPlayerBullet() {

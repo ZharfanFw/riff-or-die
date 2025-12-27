@@ -1,6 +1,5 @@
 package riffOrDie.view;
 
-
 /**
  * MENUPANEL - Login & scoreboard UI
  * 
@@ -44,7 +43,8 @@ import riffOrDie.config.GameConstants;
 /**
  * MenuPanel - Pure View, implements IMenuView
  * Hanya bertanggung jawab untuk display, semua logic di MenuPresenter
- * Features: Dark theme dengan accent red, clickable scoreboard table, rounded corners
+ * Features: Dark theme dengan accent red, clickable scoreboard table, rounded
+ * corners
  */
 public class MenuPanel extends JPanel implements IMenuView {
     // Color Constants

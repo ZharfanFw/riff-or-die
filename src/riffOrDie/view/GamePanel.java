@@ -1,4 +1,5 @@
 package riffOrDie.view;
+
 import riffOrDie.presenter.util.AudioManager;
 
 /**
@@ -162,38 +163,38 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
 
             g2d.drawString("Wave: " + currentWave, GameConstants.WAVE_HUD_X, GameConstants.WAVE_HUD_Y);
 
-        // Draw wave notification (fade in/out effect)
-        if (isNotificationActive && notificationWave >= 0) {
-            long elapsed = System.currentTimeMillis() - notificationStartTime;
-            
-            if (elapsed >= GameConstants.WAVE_NOTIFICATION_DURATION) {
-                isNotificationActive = false;
-            } else {
-                // Calculate alpha untuk fade in/out
-                float alpha = 1.0f;
-                if (elapsed < 500) {
-                    // Fade in (0 → 1)
-                    alpha = (float) elapsed / 500f;
-                } else if (elapsed > 1500) {
-                    // Fade out (1 → 0)
-                    alpha = 1f - ((float)(elapsed - 1500) / 500f);
+            // Draw wave notification (fade in/out effect)
+            if (isNotificationActive && notificationWave >= 0) {
+                long elapsed = System.currentTimeMillis() - notificationStartTime;
+
+                if (elapsed >= GameConstants.WAVE_NOTIFICATION_DURATION) {
+                    isNotificationActive = false;
+                } else {
+                    // Calculate alpha untuk fade in/out
+                    float alpha = 1.0f;
+                    if (elapsed < 500) {
+                        // Fade in (0 → 1)
+                        alpha = (float) elapsed / 500f;
+                    } else if (elapsed > 1500) {
+                        // Fade out (1 → 0)
+                        alpha = 1f - ((float) (elapsed - 1500) / 500f);
+                    }
+                    alpha = Math.max(0, Math.min(1, alpha));
+
+                    // Draw notification text
+                    Font oldFont = g2d.getFont();
+                    g2d.setFont(new Font("Arial", Font.BOLD, GameConstants.WAVE_NOTIFICATION_FONT_SIZE));
+                    g2d.setColor(new Color(255, 0, 0, (int) (255 * alpha))); // Red dengan alpha
+
+                    String text = "WAVE " + notificationWave;
+                    FontMetrics fm = g2d.getFontMetrics();
+                    int textX = (GameConstants.SCREEN_WIDTH - fm.stringWidth(text)) / 2;
+                    int textY = (GameConstants.SCREEN_HEIGHT + fm.getAscent()) / 2;
+
+                    g2d.drawString(text, textX, textY);
+                    g2d.setFont(oldFont);
                 }
-                alpha = Math.max(0, Math.min(1, alpha));
-                
-                // Draw notification text
-                Font oldFont = g2d.getFont();
-                g2d.setFont(new Font("Arial", Font.BOLD, GameConstants.WAVE_NOTIFICATION_FONT_SIZE));
-                g2d.setColor(new Color(255, 0, 0, (int)(255 * alpha))); // Red dengan alpha
-                
-                String text = "WAVE " + notificationWave;
-                FontMetrics fm = g2d.getFontMetrics();
-                int textX = (GameConstants.SCREEN_WIDTH - fm.stringWidth(text)) / 2;
-                int textY = (GameConstants.SCREEN_HEIGHT + fm.getAscent()) / 2;
-                
-                g2d.drawString(text, textX, textY);
-                g2d.setFont(oldFont);
             }
-        }
         }
     }
 
@@ -232,7 +233,6 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         // Optional: display bullets fired info
     }
 
-
     @Override
     public void updateAmmo(int ammoCount, int bulletsMissed) {
         this.currentAmmo = ammoCount;
@@ -243,12 +243,14 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     public void updateWave(int waveNumber) {
         this.currentWave = waveNumber;
     }
+
     @Override
     public void showWaveNotification(int waveNumber) {
         this.notificationWave = waveNumber;
         this.notificationStartTime = System.currentTimeMillis();
         this.isNotificationActive = true;
     }
+
     public void updateMonsters(List<Monster> monsters) {
         this.monsters = monsters;
     }
@@ -272,7 +274,7 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     public void showGameOverDialog(int finalScore) {
         // Stop game loop
         isRunning = false;
-        
+
         // Stop background music
         AudioManager.stopBackgroundMusic();
         // Stop background music

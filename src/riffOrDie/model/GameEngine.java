@@ -1,6 +1,5 @@
 package riffOrDie.model;
 
-
 /**
  * GAMEENGINE - Core game logic
  * 
@@ -607,7 +606,7 @@ public class GameEngine {
      */
     public boolean shouldShowWaveNotification() {
         long currentTime = System.currentTimeMillis();
-        
+
         // Jika wave belum berubah dari notifikasi terakhir
         if (currentWave == lastNotifiedWave) {
             // Tapi masih dalam durasi notification (< 2 detik)
@@ -617,7 +616,7 @@ public class GameEngine {
                 return false; // Sudah 2 detik berlalu
             }
         }
-        
+
         // Wave berubah! Trigger notification
         lastWaveNotificationTime = currentTime;
         lastNotifiedWave = currentWave;

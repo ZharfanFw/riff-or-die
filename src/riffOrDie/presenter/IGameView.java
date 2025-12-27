@@ -1,6 +1,5 @@
 package riffOrDie.presenter;
 
-
 /**
  * IGAMEVIEW - Interface kontrak GamePanel
  * 
@@ -56,18 +55,20 @@ public interface IGameView {
      * Update amplifiers list untuk rendering
      */
     void updateAmplifiers(List<Amplifier> amplifiers);
+
     /**
      * Update wave counter display
      */
     void updateWave(int waveNumber);
+
     /**
      * Tampilkan wave transition notification di tengah layar
      */
     void showWaveNotification(int waveNumber);
 
     /**
-
-    /**
+     * 
+     * /**
      * Show game over dialog (blocking)
      * Display score and wait for user to click OK
      * After OK, return to menu

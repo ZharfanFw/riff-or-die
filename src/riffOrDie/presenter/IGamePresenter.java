@@ -1,6 +1,5 @@
 package riffOrDie.presenter;
 
-
 /**
  * IGAMEPRESENTER - Interface kontrak GamePresenter
  * 
@@ -18,13 +17,15 @@ package riffOrDie.presenter;
 public interface IGamePresenter {
     /**
      * Start game dengan username
-     * @param username - nama pemain
+     * 
+     * @param username   - nama pemain
      * @param sisaPeluru - peluru sisa dari game sebelumnya
      */
     void startGame(String username, int sisaPeluru);
 
     /**
      * Handle player movement
+     * 
      * @param directionX - horizontal direction (-1, 0, 1)
      * @param directionY - vertical direction (-1, 0, 1)
      */

@@ -1,6 +1,5 @@
 package riffOrDie.view;
 
-
 /**
  * ROUNDEDPANEL - Custom JPanel dengan rounded corners
  * 
@@ -19,7 +18,8 @@ import java.awt.RenderingHints;
 
 /**
  * RoundedPanel - Custom JPanel dengan rounded corners
- * Digunakan untuk membuat input field, buttons, dan components lain dengan corner radius
+ * Digunakan untuk membuat input field, buttons, dan components lain dengan
+ * corner radius
  */
 public class RoundedPanel extends JPanel {
     private int cornerRadius;
@@ -28,8 +28,9 @@ public class RoundedPanel extends JPanel {
 
     /**
      * Constructor untuk RoundedPanel
-     * @param cornerRadius - ukuran radius corners (pixel)
-     * @param borderColor - warna border
+     * 
+     * @param cornerRadius    - ukuran radius corners (pixel)
+     * @param borderColor     - warna border
      * @param borderThickness - ketebalan border (pixel)
      */
     public RoundedPanel(int cornerRadius, Color borderColor, int borderThickness) {

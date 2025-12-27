@@ -1,6 +1,5 @@
 package riffOrDie.model;
 
-
 /**
  * GAMESCORE - Data Transfer Object (DTO)
  * 

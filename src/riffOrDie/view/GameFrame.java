@@ -1,6 +1,5 @@
 package riffOrDie.view;
 
-
 /**
  * GAMEFRAME - Main window container
  * 

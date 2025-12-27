@@ -1,6 +1,5 @@
 package riffOrDie.model;
 
-
 /**
  * AMPLIFIER - Entity obstacle
  * 
@@ -38,6 +37,7 @@ public class Amplifier {
 
     /**
      * Take damage to this amplifier
+     * 
      * @param damage Amount of damage to take
      */
     public void takeDamage(int damage) {
@@ -49,6 +49,7 @@ public class Amplifier {
 
     /**
      * Check if amplifier is still alive
+     * 
      * @return true if health > 0, false otherwise
      */
     public boolean isAlive() {

@@ -1,6 +1,5 @@
 package riffOrDie.presenter.util;
 
-
 /**
  * AUDIOMANAGER - Centralized audio management
  * 
@@ -54,7 +53,7 @@ public class AudioManager {
             monsterHitClip = loadAudioClip("src/assets/monster-hit-sound.wav");
             amplifierHitClip = loadAudioClip("src/assets/amplifier-hit-sound.wav");
             backgroundMusicClip = loadAudioClip("src/assets/backsound.wav");
-            
+
             System.out.println("✅ AudioManager initialized successfully");
         } catch (Exception e) {
             System.err.println("❌ Error initializing AudioManager: " + e.getMessage());
@@ -73,7 +72,8 @@ public class AudioManager {
     }
 
     /**
-     * Play player shoot sound effect (overlap-based: multiple sounds can play simultaneously)
+     * Play player shoot sound effect (overlap-based: multiple sounds can play
+     * simultaneously)
      */
     public static void playPlayerShoot() {
         playClip(playerShootClip, playerShootVolume);
@@ -87,14 +87,16 @@ public class AudioManager {
     }
 
     /**
-     * Play monster hit sound effect (overlap-based: multiple sounds can play simultaneously)
+     * Play monster hit sound effect (overlap-based: multiple sounds can play
+     * simultaneously)
      */
     public static void playMonsterHit() {
         playClip(monsterHitClip, monsterHitVolume);
     }
 
     /**
-     * Play amplifier hit sound effect (interrupt-based: stops previous sound and restarts)
+     * Play amplifier hit sound effect (interrupt-based: stops previous sound and
+     * restarts)
      */
     public static void playAmplifierHit() {
         playClipWithInterrupt(amplifierHitClip, amplifierHitVolume);
@@ -122,7 +124,8 @@ public class AudioManager {
 
     /**
      * Play clip (SFX) tanpa looping - overlap-based behavior
-     * Used by sounds that should allow multiple instances to play (player bullet, monster shoot, monster hit)
+     * Used by sounds that should allow multiple instances to play (player bullet,
+     * monster shoot, monster hit)
      * Multiple triggers = multiple sounds playing simultaneously
      */
     private static void playClip(Clip clip, float volume) {
@@ -140,7 +143,8 @@ public class AudioManager {
     /**
      * Play clip dengan interrupt - stops and restarts sound jika already playing
      * Used by sounds yang ingin interrupt behavior (amplifier hit only)
-     * Saat di-trigger ulang sebelum sound selesai → stop sound lama + restart dari frame 0
+     * Saat di-trigger ulang sebelum sound selesai → stop sound lama + restart dari
+     * frame 0
      */
     private static void playClipWithInterrupt(Clip clip, float volume) {
         if (clip != null) {
@@ -149,13 +153,13 @@ public class AudioManager {
                 if (clip.isRunning()) {
                     clip.stop();
                 }
-                
+
                 // Reset frame position ke awal
                 clip.setFramePosition(0);
-                
+
                 // Set volume
                 setVolume(clip, volume);
-                
+
                 // Start sound dari frame 0
                 clip.start();
             } catch (Exception e) {
@@ -170,7 +174,8 @@ public class AudioManager {
      * Return null if no control available (graceful degradation)
      */
     private static FloatControl getAvailableControl(Clip clip, Control.Type... types) {
-        if (clip == null) return null;
+        if (clip == null)
+            return null;
         for (Control.Type type : types) {
             try {
                 return (FloatControl) clip.getControl(type);
@@ -187,13 +192,13 @@ public class AudioManager {
      * If no control available, audio still plays at system volume
      */
     private static void setVolume(Clip clip, float volume) {
-        if (clip == null) return;
-        
-        FloatControl control = getAvailableControl(clip, 
-            FloatControl.Type.MASTER_GAIN, 
-            FloatControl.Type.VOLUME
-        );
-        
+        if (clip == null)
+            return;
+
+        FloatControl control = getAvailableControl(clip,
+                FloatControl.Type.MASTER_GAIN,
+                FloatControl.Type.VOLUME);
+
         if (control != null) {
             try {
                 // dB = 20 * log10(volume)
@@ -236,11 +241,16 @@ public class AudioManager {
      */
     public static void shutdown() {
         stopBackgroundMusic();
-        if (playerShootClip != null) playerShootClip.close();
-        if (monsterShootClip != null) monsterShootClip.close();
-        if (monsterHitClip != null) monsterHitClip.close();
-        if (amplifierHitClip != null) amplifierHitClip.close();
-        if (backgroundMusicClip != null) backgroundMusicClip.close();
+        if (playerShootClip != null)
+            playerShootClip.close();
+        if (monsterShootClip != null)
+            monsterShootClip.close();
+        if (monsterHitClip != null)
+            monsterHitClip.close();
+        if (amplifierHitClip != null)
+            amplifierHitClip.close();
+        if (backgroundMusicClip != null)
+            backgroundMusicClip.close();
         System.out.println("✅ AudioManager shutdown");
     }
 }

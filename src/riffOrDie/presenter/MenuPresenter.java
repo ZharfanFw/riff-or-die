@@ -1,6 +1,5 @@
 package riffOrDie.presenter;
 
-
 /**
  * MENUPRESENTER - Bridge menu logic <-> MenuPanel
  * 

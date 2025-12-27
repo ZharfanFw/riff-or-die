@@ -1,6 +1,5 @@
 package riffOrDie.model;
 
-
 /**
  * MONSTERTYPE - Enum tipe monster
  * 

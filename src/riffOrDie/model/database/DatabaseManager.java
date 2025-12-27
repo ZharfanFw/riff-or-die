@@ -1,6 +1,5 @@
 package riffOrDie.model.database;
 
-
 /**
  * DATABASEMANAGER - Database CRUD operations
  * 
@@ -59,7 +58,7 @@ public class DatabaseManager {
         Connection conn = null;
         try {
             conn = getConnection();
-            
+
             if (userExists(score.getUsername())) {
                 String updateSQL = "UPDATE " + DatabaseConfig.DB_TABLE +
                         " SET " + DatabaseConfig.COL_SKOR + " = ?, " +

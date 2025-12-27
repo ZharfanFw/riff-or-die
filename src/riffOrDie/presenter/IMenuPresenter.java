@@ -1,6 +1,5 @@
 package riffOrDie.presenter;
 
-
 /**
  * IMENUPRESENTER - Interface kontrak MenuPresenter
  * 
@@ -20,6 +19,7 @@ public interface IMenuPresenter {
 
     /**
      * Handle play button click
+     * 
      * @param username - username yang diinput user
      */
     void onPlayClicked(String username);

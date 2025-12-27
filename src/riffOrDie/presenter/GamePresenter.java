@@ -1,6 +1,5 @@
 package riffOrDie.presenter;
 
-
 /**
  * GAMEPRESENTER - Bridge GameEngine <-> GamePanel
  * 
@@ -51,14 +50,14 @@ public class GamePresenter implements IGamePresenter {
     public void startGame(String username, int sisaPeluru) {
         this.username = username;
         this.startingSisaPeluru = sisaPeluru;
-        
+
         // Create new GameEngine instance
         this.gameEngine = new GameEngine(username, sisaPeluru);
         this.gameOver = false;
-        
+
         // Load ammo from database or set to 0
         gameEngine.getPlayer().setAmmo(sisaPeluru);
-        
+
         // Notify view bahwa game sudah dimulai
         updateView();
     }
@@ -72,7 +71,7 @@ public class GamePresenter implements IGamePresenter {
         if (gameEngine == null || gameOver) {
             return;
         }
-        
+
         // Set player velocity based on direction
         gameEngine.getPlayer().setVelocity(directionX, directionY);
     }
@@ -85,7 +84,7 @@ public class GamePresenter implements IGamePresenter {
         if (gameEngine == null || gameOver) {
             return;
         }
-        
+
         if (gameEngine.getPlayer().getAmmo() > 0) {
             gameEngine.getPlayer().useAmmo();
             gameEngine.playerShoot();
@@ -104,20 +103,20 @@ public class GamePresenter implements IGamePresenter {
         if (gameEngine == null || gameOver) {
             return;
         }
-        
+
         // Update game engine (semua entities, collisions, scoring)
         gameEngine.update(deltaTime);
-        
+
         // Update monster shooting logic
         gameEngine.updateMonsterShooting();
-        
+
         // Check if game over
         if (gameEngine.isGameOver()) {
             gameOver = true;
             endGame();
             return;
         }
-        
+
         // Update view dengan state terbaru
         updateView();
     }
@@ -132,12 +131,12 @@ public class GamePresenter implements IGamePresenter {
         view.updateHealth(gameEngine.getPlayer().getHealth());
         view.updateAmmo(gameEngine.getPlayer().getAmmo(), gameEngine.getBulletsMissed());
         view.updateWave(gameEngine.getCurrentWave());
-        
+
         // Cek apakah perlu tampilkan wave notification
         if (gameEngine.shouldShowWaveNotification()) {
             view.showWaveNotification(gameEngine.getCurrentWave());
         }
-        
+
         // Update entities
         view.updateMonsters(gameEngine.getMonsters());
         view.updateBullets(gameEngine.getBullets());
@@ -153,23 +152,23 @@ public class GamePresenter implements IGamePresenter {
         if (gameEngine == null) {
             return;
         }
-        
+
         gameOver = true;
-        
+
         // Create GameScore object with current ammo
         GameScore gameScore = new GameScore();
         gameScore.setUsername(username);
         gameScore.setSkor(gameEngine.getScore());
         gameScore.setPeluruMeleset(gameEngine.getBulletsMissed());
         gameScore.setSisaPeluru(gameEngine.getPlayer().getAmmo());
-        
+
         // Save to database
         try {
             DatabaseManager.saveScore(gameScore);
         } catch (Exception e) {
             System.err.println("Error saving score: " + e.getMessage());
         }
-        
+
         // Show game over dialog on EDT thread (safe from game thread)
         javax.swing.SwingUtilities.invokeLater(() -> {
             view.showGameOverDialog(gameEngine.getScore());
