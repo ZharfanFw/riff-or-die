@@ -13,6 +13,7 @@ public class GameConstants {
     public static final int PLAYER_HEALTH = 5;
     public static final double PLAYER_SPEED = 260.0; // px per second
     public static final double PLAYER_BULLET_SPEED = 320.0; // px per second (increased for faster travel)
+    public static final int PLAYER_BULLET_SPAWN_OFFSET_X = -18; // offset untuk spawn bullet lebih ke kiri (center body)
 
     // Monster Setting
     public static final int MONSTER_WIDTH = 58;
