@@ -1,5 +1,19 @@
 package riffOrDie.presenter.util;
 
+
+/**
+ * INPUTHANDLER - Keyboard input handling
+ * 
+ * Fungsi:
+ * - Implement KeyListener
+ * - keyPressed() - Detect key down
+ * - Route input ke presenter:
+ *   - Z -> presenter.playerShoot()
+ *   - Arrow keys -> presenter.playerMove()
+ *   - SPACE -> presenter.returnToMenu()
+ * 
+ * Pattern: Separate input handler -> clean separation!
+ */
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

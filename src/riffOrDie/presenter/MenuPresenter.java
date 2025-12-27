@@ -1,5 +1,16 @@
 package riffOrDie.presenter;
 
+
+/**
+ * MENUPRESENTER - Bridge menu logic <-> MenuPanel
+ * 
+ * Fungsi:
+ * - loadScoreboard() - Query database, populate table
+ * - onPlayClicked() - Validate username + switch ke game
+ * - onQuitClicked() - Exit aplikasi
+ * 
+ * Validation: Check username tidak kosong
+ */
 import java.util.List;
 
 import riffOrDie.model.database.DatabaseManager;

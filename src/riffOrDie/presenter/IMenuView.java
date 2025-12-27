@@ -1,5 +1,13 @@
 package riffOrDie.presenter;
 
+
+/**
+ * IMENUVIEW - Interface kontrak MenuPanel
+ * 
+ * Fungsi:
+ * - Define contract untuk MenuPanel
+ * - Methods: updateScoreboard, showError, getUsername
+ */
 import java.util.List;
 import riffOrDie.model.GameScore;
 

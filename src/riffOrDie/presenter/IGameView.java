@@ -1,5 +1,13 @@
 package riffOrDie.presenter;
 
+
+/**
+ * IGAMEVIEW - Interface kontrak GamePanel
+ * 
+ * Fungsi:
+ * - Define contract untuk GamePanel
+ * - Methods: updateScore, updateHealth, updateMonsters, showGameOverDialog
+ */
 import java.util.List;
 import riffOrDie.model.Player;
 import riffOrDie.model.Monster;

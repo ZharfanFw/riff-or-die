@@ -1,5 +1,17 @@
 package riffOrDie.model.database;
 
+
+/**
+ * DATABASEMANAGER - Database CRUD operations
+ * 
+ * Fungsi:
+ * - saveScore() - Insert/update ke database
+ * - getPlayerScore() - Ambil score player tertentu
+ * - getAllScores() - Ambil semua untuk scoreboard
+ * - Connection management (open/close)
+ * 
+ * Penting: PreparedStatement untuk prevent SQL injection!
+ */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

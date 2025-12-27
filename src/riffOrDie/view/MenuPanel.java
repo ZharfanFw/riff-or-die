@@ -1,5 +1,17 @@
 package riffOrDie.view;
 
+
+/**
+ * MENUPANEL - Login & scoreboard UI
+ * 
+ * Fungsi:
+ * - Username input field
+ * - Scoreboard table (JTable dari database)
+ * - Play & Quit buttons
+ * - Clickable rows untuk auto-fill username
+ * 
+ * Design: Dark theme dengan accent red
+ */
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;

@@ -1,5 +1,16 @@
 package riffOrDie.view;
 
+
+/**
+ * ROUNDEDPANEL - Custom JPanel dengan rounded corners
+ * 
+ * Fungsi:
+ * - Override paintComponent() dengan Graphics2D
+ * - Draw rounded rectangle shape
+ * - Fill dengan warna custom
+ * 
+ * Benefit: Beautiful rounded UI component (radius 15px)
+ */
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Graphics2D;

@@ -1,5 +1,18 @@
 package riffOrDie.model;
 
+
+/**
+ * GAMEENGINE - Core game logic
+ * 
+ * Fungsi:
+ * - Game loop dengan delta time (frame-rate independent)
+ * - Spawn monsters sesuai wave
+ * - Collision detection semua entities
+ * - Update score, wave progression, ammo tracking
+ * - Call AudioManager untuk SFX
+ * 
+ * Pattern: Pure logic - tidak ada UI code di sini
+ */
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

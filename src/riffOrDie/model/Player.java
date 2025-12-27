@@ -1,5 +1,15 @@
 package riffOrDie.model;
 
+
+/**
+ * PLAYER - Entity pemain
+ * 
+ * Fungsi:
+ * - Simpan posisi, health, ammo
+ * - Move method untuk update posisi
+ * - Collision detection (AABB)
+ * - Ammo management (use, add, get)
+ */
 import riffOrDie.config.GameConstants;
 
 public class Player {
