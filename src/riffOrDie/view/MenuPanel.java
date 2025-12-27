@@ -12,12 +12,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.border.LineBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -30,7 +32,7 @@ import riffOrDie.config.GameConstants;
 /**
  * MenuPanel - Pure View, implements IMenuView
  * Hanya bertanggung jawab untuk display, semua logic di MenuPresenter
- * Features: Dark theme dengan accent red, clickable scoreboard table
+ * Features: Dark theme dengan accent red, clickable scoreboard table, rounded corners
  */
 public class MenuPanel extends JPanel implements IMenuView {
     // Color Constants
@@ -96,9 +98,16 @@ public class MenuPanel extends JPanel implements IMenuView {
         usernameField.setFont(new Font("Arial", Font.PLAIN, 14));
         usernameField.setBackground(DARKER_BG);
         usernameField.setForeground(TEXT_WHITE);
-        usernameField.setBorder(new LineBorder(ACCENT_RED, 2, true)); // border radius effect
+        usernameField.setBorder(new EmptyBorder(5, 10, 5, 10));
         usernameField.setCaretColor(ACCENT_RED);
-        add(usernameField, gbc);
+
+        // Wrap dalam RoundedPanel untuk rounded corners (15px radius)
+        RoundedPanel inputPanel = new RoundedPanel(15, ACCENT_RED, 2);
+        inputPanel.setBackground(DARKER_BG);
+        inputPanel.setLayout(new BorderLayout());
+        inputPanel.add(usernameField, BorderLayout.CENTER);
+
+        add(inputPanel, gbc);
     }
 
     private void addScoreBoard() {
@@ -179,15 +188,15 @@ public class MenuPanel extends JPanel implements IMenuView {
         gbc.insets = new Insets(20, 20, 30, 20);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Play Button
+        // Play Button dengan RoundedPanel wrapper
         gbc.gridx = 0;
         playButton = new JButton("Play");
         playButton.setFont(new Font("Arial", Font.BOLD, 14));
-        playButton.setBackground(ACCENT_RED);
         playButton.setForeground(TEXT_WHITE);
         playButton.setFocusPainted(false);
-        playButton.setBorder(new LineBorder(ACCENT_RED, 1, true));
         playButton.setOpaque(true);
+        playButton.setBorderPainted(false);
+        playButton.setContentAreaFilled(false);
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -196,17 +205,23 @@ public class MenuPanel extends JPanel implements IMenuView {
                 }
             }
         });
-        add(playButton, gbc);
 
-        // Quit Button
+        RoundedPanel playPanel = new RoundedPanel(15, ACCENT_RED, 2);
+        playPanel.setBackground(ACCENT_RED);
+        playPanel.setLayout(new BorderLayout());
+        playPanel.add(playButton, BorderLayout.CENTER);
+
+        add(playPanel, gbc);
+
+        // Quit Button dengan RoundedPanel wrapper
         gbc.gridx = 1;
         quitButton = new JButton("Quit");
         quitButton.setFont(new Font("Arial", Font.BOLD, 14));
-        quitButton.setBackground(SUBTLE_GRAY);
         quitButton.setForeground(TEXT_WHITE);
         quitButton.setFocusPainted(false);
-        quitButton.setBorder(new LineBorder(SUBTLE_GRAY, 1, true));
         quitButton.setOpaque(true);
+        quitButton.setBorderPainted(false);
+        quitButton.setContentAreaFilled(false);
         quitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -215,7 +230,13 @@ public class MenuPanel extends JPanel implements IMenuView {
                 }
             }
         });
-        add(quitButton, gbc);
+
+        RoundedPanel quitPanel = new RoundedPanel(15, SUBTLE_GRAY, 2);
+        quitPanel.setBackground(SUBTLE_GRAY);
+        quitPanel.setLayout(new BorderLayout());
+        quitPanel.add(quitButton, BorderLayout.CENTER);
+
+        add(quitPanel, gbc);
     }
 
     /**
