@@ -27,7 +27,7 @@ public interface IGameView {
      */
     void updateBulletsFired(int bulletsFired);
 
-    void updateAmmo(int ammoCount);
+    void updateAmmo(int ammoCount, int bulletsMissed);
 
     /**
      * Update monsters list untuk rendering
@@ -48,6 +48,16 @@ public interface IGameView {
      * Update amplifiers list untuk rendering
      */
     void updateAmplifiers(List<Amplifier> amplifiers);
+    /**
+     * Update wave counter display
+     */
+    void updateWave(int waveNumber);
+    /**
+     * Tampilkan wave transition notification di tengah layar
+     */
+    void showWaveNotification(int waveNumber);
+
+    /**
 
     /**
      * Show game over dialog (blocking)

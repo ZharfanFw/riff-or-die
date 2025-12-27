@@ -11,14 +11,14 @@ public class GameConstants {
     public static final int PLAYER_WIDTH = 58;
     public static final int PLAYER_HEIGHT = 64;
     public static final int PLAYER_HEALTH = 5;
-    public static final double PLAYER_SPEED = 230.0; // px per second
-    public static final double PLAYER_BULLET_SPEED = 240.0; // px per second
+    public static final double PLAYER_SPEED = 260.0; // px per second
+    public static final double PLAYER_BULLET_SPEED = 320.0; // px per second (increased for faster travel)
 
     // Monster Setting
     public static final int MONSTER_WIDTH = 58;
     public static final int MONSTER_HEIGHT = 56;
-    public static final double MONSTER_BULLET_SPEED = 170.0; // px per second (increased from 150)
-    public static final long MONSTER_SHOOT_COOLDOWN = 2500; // 2.5 seconds // milisecond
+    public static final double MONSTER_BULLET_SPEED = 220.0; // px per second (increased from 170)
+    public static final long MONSTER_SHOOT_COOLDOWN = 2000; // 1.8 seconds (decreased from 2500 for balance)
 
     // Amplifier (Obstacle) Setting
     public static final int AMPLIFIER_WIDTH = 78;
@@ -30,16 +30,32 @@ public class GameConstants {
     public static final int AMPLIFIER_SPAWN_Y_MIN = 200; // amplifier spawn Y range min
     public static final int AMPLIFIER_SPAWN_Y_MAX = 400; // amplifier spawn Y range max
 
-    // Ammo HUD Display position (top-left, below health)
-    public static final int AMMO_HUD_X = 10;
-    public static final int AMMO_HUD_Y = 30;
-
     // Monster Spawn Setting
     public static final int MONSTER_SPAWN_Y_MIN = 300; // monster spawn Y range min
     public static final int MONSTER_SPAWN_Y_MAX = 544; // monster spawn Y range max (600 - 56 height)
 
     // Spawning Setting
-    public static final long BASE_SPAWN_RATE = 5000; // 4 seconds // milisecond
+    public static final long BASE_SPAWN_RATE = 5000; // 5 seconds (old default)
+
+    // Wave System Setting - Score Thresholds
+    public static final int WAVE_0_MAX_SCORE = 2500;
+    public static final int WAVE_1_MAX_SCORE = 5500;
+    public static final int WAVE_2_MAX_SCORE = 8000;
+    // Wave 3 starts at 8000+
+
+    // Wave System Setting - Spawn Rates
+    public static final long WAVE_0_SPAWN_RATE = 6000; // 6 seconds
+    public static final long WAVE_1_SPAWN_RATE = 5000; // 5 seconds
+    public static final long WAVE_2_SPAWN_RATE = 4000; // 4 seconds
+    public static final long WAVE_3_SPAWN_RATE = 3000; // 3 seconds
+
+    // Wave Notification Setting
+    public static final long WAVE_NOTIFICATION_DURATION = 2000;
+    public static final int WAVE_NOTIFICATION_FONT_SIZE = 72;
+
+    // HUD Setting
+    public static final int WAVE_HUD_X = 700;
+    public static final int WAVE_HUD_Y = 30;
 
     // Database Setting
     public static final String DB_URL = "jdbc:mysql://localhost:3306/riffordie";

@@ -74,7 +74,7 @@ public class GamePresenter implements IGamePresenter {
         if (gameEngine.getPlayer().getAmmo() > 0) {
             gameEngine.getPlayer().useAmmo();
             gameEngine.playerShoot();
-            view.updateAmmo(gameEngine.getPlayer().getAmmo());
+            view.updateAmmo(gameEngine.getPlayer().getAmmo(), gameEngine.getBulletsMissed());
         }
     }
 
@@ -114,7 +114,13 @@ public class GamePresenter implements IGamePresenter {
         // Update score, health, ammo
         view.updateScore(gameEngine.getScore());
         view.updateHealth(gameEngine.getPlayer().getHealth());
-        view.updateAmmo(gameEngine.getPlayer().getAmmo());
+        view.updateAmmo(gameEngine.getPlayer().getAmmo(), gameEngine.getBulletsMissed());
+        view.updateWave(gameEngine.getCurrentWave());
+        
+        // Cek apakah perlu tampilkan wave notification
+        if (gameEngine.shouldShowWaveNotification()) {
+            view.showWaveNotification(gameEngine.getCurrentWave());
+        }
         
         // Update entities
         view.updateMonsters(gameEngine.getMonsters());

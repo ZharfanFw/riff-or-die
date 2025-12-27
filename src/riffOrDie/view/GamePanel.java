@@ -4,6 +4,9 @@ import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Color;
 import java.awt.event.KeyListener;
 import java.util.List;
 
@@ -36,6 +39,11 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     private int score;
     private int health;
     private int currentAmmo = 0;
+    private int bulletsMissed = 0;
+    private int currentWave = 0;
+    private int notificationWave = -1;
+    private long notificationStartTime = 0;
+    private boolean isNotificationActive = false;
 
     private Thread gameThread;
     private volatile boolean isRunning;
@@ -98,14 +106,6 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // Render semua entities yang telah di-update oleh presenter
-        if (player != null && monsters != null && bullets != null && amplifiers != null) {
-            // Create temporary GameEngine-like object for rendering
-            // Or render directly using stored state
-            g2d.setColor(java.awt.Color.WHITE);
-            g2d.drawString("Riff or Die", 10, 20);
-        }
-
         // Call GameRenderer dengan player, monsters, bullets, amplifiers
         // Copy lists to prevent ConcurrentModificationException
         if (amplifiers != null) {
@@ -134,12 +134,47 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         // Draw health
         g2d.drawString("Health: " + health, 10, 40);
 
-        // Draw ammo
-        GameRenderer.drawAmmo(g2d, currentAmmo, GameConstants.AMMO_HUD_X, GameConstants.AMMO_HUD_Y);
+        // Draw ammo (with missed count)
+        GameRenderer.drawAmmo(g2d, currentAmmo, bulletsMissed, 10, 60);
 
-        // Draw enemies count
+        // Draw enemies count (kanan atas)
         if (monsters != null) {
-            g2d.drawString("Enemies: " + monsters.size(), GameConstants.SCREEN_WIDTH - 150, 20);
+            g2d.drawString("Enemies: " + monsters.size(), 700, 20);
+
+            g2d.drawString("Wave: " + currentWave, GameConstants.WAVE_HUD_X, GameConstants.WAVE_HUD_Y);
+
+        // Draw wave notification (fade in/out effect)
+        if (isNotificationActive && notificationWave >= 0) {
+            long elapsed = System.currentTimeMillis() - notificationStartTime;
+            
+            if (elapsed >= GameConstants.WAVE_NOTIFICATION_DURATION) {
+                isNotificationActive = false;
+            } else {
+                // Calculate alpha untuk fade in/out
+                float alpha = 1.0f;
+                if (elapsed < 500) {
+                    // Fade in (0 → 1)
+                    alpha = (float) elapsed / 500f;
+                } else if (elapsed > 1500) {
+                    // Fade out (1 → 0)
+                    alpha = 1f - ((float)(elapsed - 1500) / 500f);
+                }
+                alpha = Math.max(0, Math.min(1, alpha));
+                
+                // Draw notification text
+                Font oldFont = g2d.getFont();
+                g2d.setFont(new Font("Arial", Font.BOLD, GameConstants.WAVE_NOTIFICATION_FONT_SIZE));
+                g2d.setColor(new Color(255, 0, 0, (int)(255 * alpha))); // Red dengan alpha
+                
+                String text = "WAVE " + notificationWave;
+                FontMetrics fm = g2d.getFontMetrics();
+                int textX = (GameConstants.SCREEN_WIDTH - fm.stringWidth(text)) / 2;
+                int textY = (GameConstants.SCREEN_HEIGHT + fm.getAscent()) / 2;
+                
+                g2d.drawString(text, textX, textY);
+                g2d.setFont(oldFont);
+            }
+        }
         }
     }
 
@@ -178,12 +213,23 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         // Optional: display bullets fired info
     }
 
+
     @Override
-    public void updateAmmo(int ammoCount) {
+    public void updateAmmo(int ammoCount, int bulletsMissed) {
         this.currentAmmo = ammoCount;
+        this.bulletsMissed = bulletsMissed;
     }
 
     @Override
+    public void updateWave(int waveNumber) {
+        this.currentWave = waveNumber;
+    }
+    @Override
+    public void showWaveNotification(int waveNumber) {
+        this.notificationWave = waveNumber;
+        this.notificationStartTime = System.currentTimeMillis();
+        this.isNotificationActive = true;
+    }
     public void updateMonsters(List<Monster> monsters) {
         this.monsters = monsters;
     }
