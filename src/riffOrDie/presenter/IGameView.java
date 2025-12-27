@@ -52,6 +52,12 @@ public interface IGameView {
      * Update wave counter display
      */
     void updateWave(int waveNumber);
+    /**
+     * Tampilkan wave transition notification di tengah layar
+     */
+    void showWaveNotification(int waveNumber);
+
+    /**
 
     /**
      * Show game over dialog (blocking)

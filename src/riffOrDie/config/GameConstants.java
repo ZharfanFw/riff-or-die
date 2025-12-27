@@ -11,14 +11,14 @@ public class GameConstants {
     public static final int PLAYER_WIDTH = 58;
     public static final int PLAYER_HEIGHT = 64;
     public static final int PLAYER_HEALTH = 5;
-    public static final double PLAYER_SPEED = 230.0; // px per second
+    public static final double PLAYER_SPEED = 260.0; // px per second
     public static final double PLAYER_BULLET_SPEED = 320.0; // px per second (increased for faster travel)
 
     // Monster Setting
     public static final int MONSTER_WIDTH = 58;
     public static final int MONSTER_HEIGHT = 56;
-    public static final double MONSTER_BULLET_SPEED = 200.0; // px per second (increased from 170)
-    public static final long MONSTER_SHOOT_COOLDOWN = 1800; // 1.8 seconds (decreased from 2500 for balance)
+    public static final double MONSTER_BULLET_SPEED = 220.0; // px per second (increased from 170)
+    public static final long MONSTER_SHOOT_COOLDOWN = 2000; // 1.8 seconds (decreased from 2500 for balance)
 
     // Amplifier (Obstacle) Setting
     public static final int AMPLIFIER_WIDTH = 78;
@@ -48,6 +48,10 @@ public class GameConstants {
     public static final long WAVE_1_SPAWN_RATE = 5000; // 5 seconds
     public static final long WAVE_2_SPAWN_RATE = 4000; // 4 seconds
     public static final long WAVE_3_SPAWN_RATE = 3000; // 3 seconds
+
+    // Wave Notification Setting
+    public static final long WAVE_NOTIFICATION_DURATION = 2000;
+    public static final int WAVE_NOTIFICATION_FONT_SIZE = 72;
 
     // HUD Setting
     public static final int WAVE_HUD_X = 700;

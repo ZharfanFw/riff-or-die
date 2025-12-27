@@ -117,6 +117,11 @@ public class GamePresenter implements IGamePresenter {
         view.updateAmmo(gameEngine.getPlayer().getAmmo(), gameEngine.getBulletsMissed());
         view.updateWave(gameEngine.getCurrentWave());
         
+        // Cek apakah perlu tampilkan wave notification
+        if (gameEngine.shouldShowWaveNotification()) {
+            view.showWaveNotification(gameEngine.getCurrentWave());
+        }
+        
         // Update entities
         view.updateMonsters(gameEngine.getMonsters());
         view.updateBullets(gameEngine.getBullets());

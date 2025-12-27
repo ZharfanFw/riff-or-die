@@ -4,6 +4,9 @@ import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Color;
 import java.awt.event.KeyListener;
 import java.util.List;
 
@@ -38,6 +41,9 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
     private int currentAmmo = 0;
     private int bulletsMissed = 0;
     private int currentWave = 0;
+    private int notificationWave = -1;
+    private long notificationStartTime = 0;
+    private boolean isNotificationActive = false;
 
     private Thread gameThread;
     private volatile boolean isRunning;
@@ -136,6 +142,39 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
             g2d.drawString("Enemies: " + monsters.size(), 700, 20);
 
             g2d.drawString("Wave: " + currentWave, GameConstants.WAVE_HUD_X, GameConstants.WAVE_HUD_Y);
+
+        // Draw wave notification (fade in/out effect)
+        if (isNotificationActive && notificationWave >= 0) {
+            long elapsed = System.currentTimeMillis() - notificationStartTime;
+            
+            if (elapsed >= GameConstants.WAVE_NOTIFICATION_DURATION) {
+                isNotificationActive = false;
+            } else {
+                // Calculate alpha untuk fade in/out
+                float alpha = 1.0f;
+                if (elapsed < 500) {
+                    // Fade in (0 → 1)
+                    alpha = (float) elapsed / 500f;
+                } else if (elapsed > 1500) {
+                    // Fade out (1 → 0)
+                    alpha = 1f - ((float)(elapsed - 1500) / 500f);
+                }
+                alpha = Math.max(0, Math.min(1, alpha));
+                
+                // Draw notification text
+                Font oldFont = g2d.getFont();
+                g2d.setFont(new Font("Arial", Font.BOLD, GameConstants.WAVE_NOTIFICATION_FONT_SIZE));
+                g2d.setColor(new Color(255, 0, 0, (int)(255 * alpha))); // Red dengan alpha
+                
+                String text = "WAVE " + notificationWave;
+                FontMetrics fm = g2d.getFontMetrics();
+                int textX = (GameConstants.SCREEN_WIDTH - fm.stringWidth(text)) / 2;
+                int textY = (GameConstants.SCREEN_HEIGHT + fm.getAscent()) / 2;
+                
+                g2d.drawString(text, textX, textY);
+                g2d.setFont(oldFont);
+            }
+        }
         }
     }
 
@@ -186,6 +225,11 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         this.currentWave = waveNumber;
     }
     @Override
+    public void showWaveNotification(int waveNumber) {
+        this.notificationWave = waveNumber;
+        this.notificationStartTime = System.currentTimeMillis();
+        this.isNotificationActive = true;
+    }
     public void updateMonsters(List<Monster> monsters) {
         this.monsters = monsters;
     }
