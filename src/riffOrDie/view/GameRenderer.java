@@ -31,13 +31,27 @@ import riffOrDie.presenter.ImageLoader;
 import riffOrDie.config.GameConstants;
 
 public class GameRenderer {
+    /** Image sprite player */
     public static Image playerImage;
+
+    /** Image sprite monster easy */
     public static Image monsterEasyImage;
+
+    /** Image sprite monster hard */
     public static Image monsterHardImage;
+
+    /** Image sprite amplifier */
     public static Image amplifierImage;
+
+    /** Image sprite bullet player */
     public static Image playerBulletImage;
+
+    /** Image sprite bullet monster */
     public static Image monsterBulletImage;
 
+    /**
+     * Static block - Load semua image sprites saat class dimuat
+     */
     static {
         playerImage = ImageLoader.loadImage("src/assets/player.png");
         monsterEasyImage = ImageLoader.loadImage("src/assets/monster-easy.png");
@@ -47,6 +61,13 @@ public class GameRenderer {
         monsterBulletImage = ImageLoader.loadImage("src/assets/bullet-monster.png");
     }
 
+    /**
+     * Render semua elements ke screen
+     * Helper method untuk render full game state
+     * 
+     * @param g2d        Graphics2D context
+     * @param gameEngine GameEngine yang hold semua state
+     */
     public static void render(Graphics2D g2d, GameEngine gameEngine) {
         drawAmplifiers(g2d, gameEngine.getAmplifiers());
         drawMonsters(g2d, gameEngine.getMonsters());
@@ -55,29 +76,71 @@ public class GameRenderer {
         drawUI(g2d, gameEngine);
     }
 
-    // Public static methods for GamePanel rendering
+    // ===================== PUBLIC STATIC METHODS =====================
+
+    /**
+     * Draw amplifiers (static wrapper untuk GamePanel)
+     * 
+     * @param g2d        Graphics2D context
+     * @param amplifiers List amplifier yang akan digambar
+     */
     public static void drawAmplifiersStatic(Graphics2D g2d, List<Amplifier> amplifiers) {
         drawAmplifiers(g2d, amplifiers);
     }
 
+    /**
+     * Draw monsters (static wrapper untuk GamePanel)
+     * 
+     * @param g2d      Graphics2D context
+     * @param monsters List monster yang akan digambar
+     */
     public static void drawMonstersStatic(Graphics2D g2d, List<Monster> monsters) {
         drawMonsters(g2d, monsters);
     }
 
+    /**
+     * Draw bullets (static wrapper untuk GamePanel)
+     * 
+     * @param g2d     Graphics2D context
+     * @param bullets List bullet yang akan digambar
+     */
     public static void drawBulletsStatic(Graphics2D g2d, List<Bullet> bullets) {
         drawBullets(g2d, bullets);
     }
 
+    /**
+     * Draw player (static wrapper untuk GamePanel)
+     * 
+     * @param g2d    Graphics2D context
+     * @param player Player entity
+     */
     public static void drawPlayerStatic(Graphics2D g2d, Player player) {
         drawPlayer(g2d, player);
     }
 
+    /**
+     * Draw ammo HUD text
+     * 
+     * @param g             Graphics context
+     * @param ammo          Jumlah ammo saat ini
+     * @param bulletsMissed Jumlah bullet meleset
+     * @param x             Posisi X
+     * @param y             Posisi Y
+     */
     public static void drawAmmo(Graphics2D g, int ammo, int bulletsMissed, int x, int y) {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 14));
         g.drawString("Ammo: " + ammo + " (Missed: " + bulletsMissed + ")", x, y);
     }
 
+    // ===================== PRIVATE DRAWING METHODS =====================
+
+    /**
+     * Draw semua amplifiers
+     * 
+     * @param g2d        Graphics2D context
+     * @param amplifiers List amplifier aktif
+     */
     private static void drawAmplifiers(Graphics2D g2d, List<Amplifier> amplifiers) {
         for (Amplifier amp : amplifiers) {
             if (amplifierImage != null) {
@@ -104,6 +167,12 @@ public class GameRenderer {
         }
     }
 
+    /**
+     * Draw semua monsters
+     * 
+     * @param g2d      Graphics2D context
+     * @param monsters List monster aktif
+     */
     private static void drawMonsters(Graphics2D g2d, List<Monster> monsters) {
         for (Monster monster : monsters) {
             Image image = monster.getType() == MonsterType.EASY ? monsterEasyImage : monsterHardImage;
@@ -140,6 +209,12 @@ public class GameRenderer {
         }
     }
 
+    /**
+     * Draw semua bullets
+     * 
+     * @param g2d     Graphics2D context
+     * @param bullets List bullet aktif
+     */
     private static void drawBullets(Graphics2D g2d, List<Bullet> bullets) {
         for (Bullet bullet : bullets) {
             double angle = bullet.getAngle(); // angle dalam radians
@@ -188,6 +263,12 @@ public class GameRenderer {
         }
     }
 
+    /**
+     * Draw player
+     * 
+     * @param g2d    Graphics2D context
+     * @param player Player entity
+     */
     private static void drawPlayer(Graphics2D g2d, Player player) {
         if (playerImage != null) {
             g2d.drawImage(playerImage, player.getX(), player.getY(), player.getWidth(), player.getHeight(), null);
@@ -207,8 +288,14 @@ public class GameRenderer {
         }
     }
 
+    /**
+     * Draw UI elements (score, health, bullets, enemies)
+     * 
+     * @param g2d        Graphics2D context
+     * @param gameEngine GameEngine untuk ambil data
+     */
     private static void drawUI(Graphics2D g2d, GameEngine gameEngine) {
-        // Set font for UI text
+        // Set font untuk UI text
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.BOLD, 14));
 
@@ -227,7 +314,10 @@ public class GameRenderer {
     }
 
     /**
-     * Draw amplifier health number in center
+     * Draw amplifier health number di tengah
+     * 
+     * @param g2d       Graphics2D context
+     * @param amplifier Amplifier entity
      */
     private static void drawAmplifierHealth(Graphics2D g2d, Amplifier amplifier) {
         g2d.setColor(Color.WHITE);
@@ -240,6 +330,16 @@ public class GameRenderer {
         g2d.drawString(healthText, textX, textY);
     }
 
+    /**
+     * Draw health bar untuk monster yang terdamage
+     * 
+     * @param g2d           Graphics2D context
+     * @param x             Posisi X
+     * @param y             Posisi Y
+     * @param width         Lebar health bar
+     * @param currentHealth Health saat ini
+     * @param maxHealth     Health maksimum
+     */
     private static void drawHealthBar(Graphics2D g2d, int x, int y, int width, int currentHealth, int maxHealth) {
         // Background (red)
         g2d.setColor(new Color(200, 0, 0));
@@ -256,6 +356,14 @@ public class GameRenderer {
         g2d.drawRect(x, y, width, 4);
     }
 
+    /**
+     * Draw sound wave effect (tidak dipakai di game)
+     * 
+     * @param g2d            Graphics2D context
+     * @param x              Posisi X
+     * @param y              Posisi Y
+     * @param isPlayerBullet Apakah bullet player
+     */
     private static void drawSoundWave(Graphics2D g2d, int x, int y, boolean isPlayerBullet) {
         // Draw concentric circles to represent sound wave
         int[] radiuses = { 3, 6, 9 };

@@ -13,13 +13,27 @@ package riffOrDie.model;
 import riffOrDie.config.GameConstants;
 
 public class Amplifier {
+    /** Posisi X amplifier */
     private int x;
+    
+    /** Posisi Y amplifier */
     private int y;
+    
+    /** Lebar hitbox amplifier */
     private int width;
+    
+    /** Tinggi hitbox amplifier */
     private int height;
+    
+    /** Health amplifier (default 3 HP) */
     private int health;
 
-    // Constructors
+    /**
+     * Constructor - Buat amplifier baru di posisi spesifik
+     * 
+     * @param x Posisi X spawn
+     * @param y Posisi Y spawn
+     */
     public Amplifier(int x, int y) {
         this.x = x;
         this.y = y;
@@ -28,6 +42,12 @@ public class Amplifier {
         this.health = GameConstants.AMPLIFIER_HEALTH;
     }
 
+    /**
+     * Cek collision antara amplifier dan bullet
+     * 
+     * @param bullet Bullet yang dicek
+     * @return true jika collision, false jika tidak
+     */
     public boolean collidesWith(Bullet bullet) {
         boolean collidingX = x < bullet.getX() + bullet.getWidth() && x + width > bullet.getX();
         boolean collidingY = y < bullet.getY() + bullet.getHeight() && y + height > bullet.getY();
@@ -36,9 +56,10 @@ public class Amplifier {
     }
 
     /**
-     * Take damage to this amplifier
+     * Ambil damage untuk amplifier ini
+     * Health akan dikurangi, minimum 0
      * 
-     * @param damage Amount of damage to take
+     * @param damage Jumlah damage yang diterima
      */
     public void takeDamage(int damage) {
         this.health -= damage;
@@ -48,31 +69,55 @@ public class Amplifier {
     }
 
     /**
-     * Check if amplifier is still alive
+     * Cek apakah amplifier masih hidup
      * 
-     * @return true if health > 0, false otherwise
+     * @return true jika health > 0, false jika health <= 0
      */
     public boolean isAlive() {
         return this.health > 0;
     }
 
-    // Getters
+    /**
+     * Ambil posisi X amplifier
+     * 
+     * @return Posisi X dalam pixel
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Ambil posisi Y amplifier
+     * 
+     * @return Posisi Y dalam pixel
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Ambil lebar hitbox amplifier
+     * 
+     * @return Lebar dalam pixel
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Ambil tinggi hitbox amplifier
+     * 
+     * @return Tinggi dalam pixel
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Ambil health amplifier saat ini
+     * 
+     * @return Health amplifier (0-3)
+     */
     public int getHealth() {
         return health;
     }

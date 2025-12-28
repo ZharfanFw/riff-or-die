@@ -41,17 +41,27 @@ import java.io.File;
 import java.io.IOException;
 
 public class ImageLoader {
+    /**
+     * Load image file dari path
+     * Static method, tidak perlu instance
+     * 
+     * @param path Path ke file image (PNG format)
+     * @return BufferedImage jika sukses, null jika gagal/file tidak ada
+     */
     public static Image loadImage(String path) {
         try {
             File imageFile = new File(path);
 
+            // Cek apakah file ada
             if (!imageFile.exists()) {
                 System.err.println("Image file tidak ditemukan: " + path);
                 return null;
             }
 
+            // Baca file image
             BufferedImage bufferedImage = ImageIO.read(imageFile);
 
+            // Cek apakah image berhasil dibaca
             if (bufferedImage == null) {
                 System.err.println("Gagal membaca image file: " + path);
                 return null;

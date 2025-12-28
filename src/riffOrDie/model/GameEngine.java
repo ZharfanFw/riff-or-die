@@ -20,26 +20,60 @@ import riffOrDie.presenter.AudioManager;
 import riffOrDie.config.GameConstants;
 
 public class GameEngine {
+    /** Entity player */
     private Player player;
+    
+    /** List semua monster aktif */
     private List<Monster> monsters;
+    
+    /** List semua bullet aktif */
     private List<Bullet> bullets;
+    
+    /** List semua amplifier aktif */
     private List<Amplifier> amplifiers;
 
+    /** Skor player saat ini */
     private int score;
+    
+    /** Jumlah bullet yang sudah ditembak */
     private int bulletsFired;
+    
+    /** Jumlah bullet yang meleset (kena amplifier) */
     private int bulletsMissed;
+    
+    /** Username player saat ini */
     private String currentUsername;
 
+    /** Waktu terakhir spawn monster (ms) */
     private long lastSpawnTime;
+    
+    /** Interval antar spawn monster (ms) */
     private long spawnInterval;
+    
+    /** Waktu terakhir update game (ms) */
     private long lastUpdateTime;
+    
+    /** Waktu terakhir regenerate amplifier (ms) */
     private long lastAmplifierRegenerateTime;
+    
+    /** Random generator untuk spawn positions */
     private Random random;
+    
+    /** Wave number saat ini (0-3) */
     private int currentWave;
 
+    /** Waktu terakhir tampilkan wave notification (ms) */
     private long lastWaveNotificationTime = 0;
+    
+    /** Wave terakhir yang sudah dinotifikasi */
     private int lastNotifiedWave = -1;
 
+    /**
+     * Constructor - Inisialisasi game engine
+     * 
+     * @param username Username player
+     * @param startingSisaPeluru Ammo awal (dari previous session)
+     */
     public GameEngine(String username, int startingSisaPeluru) {
         this.currentUsername = username;
 
@@ -47,6 +81,7 @@ public class GameEngine {
         int playerStartX = GameConstants.SCREEN_WIDTH / 2 - GameConstants.PLAYER_WIDTH / 2;
         int playerStartY = GameConstants.SCREEN_HEIGHT / 2 - GameConstants.PLAYER_HEIGHT / 2;
         this.player = new Player(playerStartX, playerStartY);
+        this.player.setAmmo(startingSisaPeluru);
 
         // Initialize collections
         this.monsters = new ArrayList<>();
@@ -64,9 +99,14 @@ public class GameEngine {
         this.currentWave = 1;
         this.lastAmplifierRegenerateTime = System.currentTimeMillis();
 
+        // Spawn initial amplifiers
         initializeAmplifiers();
     }
 
+    /**
+     * Inisialisasi amplifiers saat game mulai
+     * Spawn 3-5 amplifier di posisi acak yang tidak collision
+     */
     private void initializeAmplifiers() {
         int count = GameConstants.AMPLIFIER_COUNT_MIN
                 + random.nextInt(GameConstants.AMPLIFIER_COUNT_MAX - GameConstants.AMPLIFIER_COUNT_MIN + 1);
@@ -78,7 +118,7 @@ public class GameEngine {
             int retries = 0;
             int maxRetries = 10;
 
-            // Find safe spawn position (not colliding with other amplifiers)
+            // Find safe spawn position (not colliding with other entities)
             while (!validPosition && retries < maxRetries) {
                 x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
                 y = GameConstants.AMPLIFIER_SPAWN_Y_MIN
@@ -95,12 +135,11 @@ public class GameEngine {
                 amplifiers.add(new Amplifier(x, y));
             }
         }
-
     }
 
     /**
-     * Regenerate amplifiers every 7 seconds
-     * Clears all amplifiers and spawns new ones to maintain 2-5 count
+     * Regenerate amplifiers setiap 8 detik
+     * Hapus semua amplifier lama, spawn yang baru
      */
     private void regenerateAmplifiers() {
         long currentTime = System.currentTimeMillis();
@@ -122,7 +161,7 @@ public class GameEngine {
                 int retries = 0;
                 int maxRetries = 10;
 
-                // Find safe spawn position (not colliding with other amplifiers)
+                // Find safe spawn position (not colliding with other entities)
                 while (!validPosition && retries < maxRetries) {
                     x = random.nextInt(GameConstants.SCREEN_WIDTH - GameConstants.AMPLIFIER_WIDTH);
                     y = GameConstants.AMPLIFIER_SPAWN_Y_MIN
@@ -142,25 +181,38 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Main update loop - dipanggil setiap frame
+     * 
+     * @param deltaTime Delta time (detik) sejak frame terakhir
+     */
     public void update(double deltaTime) {
+        // Update wave berdasarkan score
         updateWaveBasedOnScore();
-        // Update player with collision detection against amplifiers
+        
+        // Update player dengan collision detection terhadap amplifiers
         updatePlayerWithCollisions(deltaTime);
 
+        // Update semua monsters
         for (Monster monster : monsters) {
             monster.update(deltaTime);
         }
 
+        // Update semua bullets
         for (Bullet bullet : bullets) {
             bullet.update(deltaTime);
         }
 
+        // Spawn monsters berdasarkan spawn rate
         spawnMonsters();
 
+        // Regenerate amplifiers
         regenerateAmplifiers();
 
+        // Handle semua collision
         checkCollisons();
 
+        // Hapus dead monsters
         List<Monster> deadMonsters = new ArrayList<>();
         for (Monster m : monsters) {
             if (!m.isAlive() || m.isOutOfBounds()) {
@@ -169,6 +221,7 @@ public class GameEngine {
         }
         monsters.removeAll(deadMonsters);
 
+        // Hapus inactive bullets (keluar layar)
         List<Bullet> inactiveBullets = new ArrayList<>();
         for (Bullet b : bullets) {
             if (!b.isActive()) {
@@ -184,10 +237,10 @@ public class GameEngine {
 
     /**
      * Update wave berdasarkan score saat ini
-     * Score 0-2499: Wave 0 (spawn 6s)
-     * Score 2500-5499: Wave 1 (spawn 5s)
-     * Score 5500-7999: Wave 2 (spawn 4s)
-     * Score 8000+: Wave 3 (spawn 3s)
+     * Wave 0 (0-2499 score): Spawn rate 6s
+     * Wave 1 (2500-5499 score): Spawn rate 5s
+     * Wave 2 (5500-7999 score): Spawn rate 4s
+     * Wave 3 (8000+ score): Spawn rate 3s
      */
     private void updateWaveBasedOnScore() {
         if (score < GameConstants.WAVE_0_MAX_SCORE) {
@@ -205,6 +258,11 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Spawn monsters berdasarkan spawn rate
+     * Spawn 1-2 monster per spawn cycle
+     * 70% chance EASY, 30% chance HARD
+     */
     private void spawnMonsters() {
         long currentTime = System.currentTimeMillis();
 
@@ -246,12 +304,15 @@ public class GameEngine {
                     monsters.add(new Monster(x, y, type));
                 }
             }
-
         }
     }
 
     /**
-     * Check if amplifier spawn position collides with player
+     * Cek apakah posisi spawn amplifier collision dengan player
+     * 
+     * @param ampX Posisi X amplifier
+     * @param ampY Posisi Y amplifier
+     * @return true jika collision, false jika tidak
      */
     private boolean checkAmplifierPlayerCollision(int ampX, int ampY) {
         Player p = player;
@@ -262,7 +323,11 @@ public class GameEngine {
     }
 
     /**
-     * Check if amplifier spawn position collides with any monster
+     * Cek apakah posisi spawn amplifier collision dengan monster apapun
+     * 
+     * @param ampX Posisi X amplifier
+     * @param ampY Posisi Y amplifier
+     * @return true jika collision, false jika tidak
      */
     private boolean checkAmplifierMonsterCollision(int ampX, int ampY) {
         for (Monster m : monsters) {
@@ -277,8 +342,12 @@ public class GameEngine {
     }
 
     /**
-     * Check if spawn position (amplifier at x, y) collides with existing amplifiers
-     * Uses AABB collision detection
+     * Cek apakah posisi spawn amplifier collision dengan amplifier yang sudah ada
+     * Menggunakan AABB collision detection
+     * 
+     * @param ampX Posisi X amplifier baru
+     * @param ampY Posisi Y amplifier baru
+     * @return true jika collision, false jika tidak
      */
     private boolean checkAmplifierSpawnCollision(int ampX, int ampY) {
         for (Amplifier amp : amplifiers) {
@@ -293,8 +362,13 @@ public class GameEngine {
     }
 
     /**
-     * Check if spawn position (monster at x, y) collides with amplifier
-     * Uses AABB collision detection
+     * Cek apakah posisi spawn monster collision dengan amplifier tertentu
+     * Menggunakan AABB collision detection
+     * 
+     * @param monsterX Posisi X monster
+     * @param monsterY Posisi Y monster
+     * @param amplifier Amplifier yang dicek
+     * @return true jika collision, false jika tidak
      */
     private boolean checkMonsterSpawnCollision(int monsterX, int monsterY, Amplifier amplifier) {
         return monsterX < amplifier.getX() + amplifier.getWidth() &&
@@ -304,8 +378,12 @@ public class GameEngine {
     }
 
     /**
-     * Check if spawn position (monster at x, y) collides with any existing monster
-     * Uses AABB collision detection
+     * Cek apakah posisi spawn monster collision dengan monster yang sudah ada
+     * Menggunakan AABB collision detection
+     * 
+     * @param monsterX Posisi X monster baru
+     * @param monsterY Posisi Y monster baru
+     * @return true jika collision, false jika tidak
      */
     private boolean checkMonsterMonsterCollision(int monsterX, int monsterY) {
         for (Monster m : monsters) {
@@ -320,15 +398,16 @@ public class GameEngine {
     }
 
     /**
-     * Update player position with collision detection against amplifiers
-     * Implements smart sliding: allows movement in one axis even if blocked in
-     * another
+     * Update posisi player dengan collision detection terhadap amplifiers
+     * Implement smart sliding: player bisa bergerak di satu axis meski blocked di axis lain
+     * 
+     * @param deltaTime Delta time (detik)
      */
     private void updatePlayerWithCollisions(double deltaTime) {
         int currentX = player.getX();
         int currentY = player.getY();
 
-        // Calculate new position with delta time
+        // Calculate new position dengan delta time
         int newX = currentX + (int) (player.getVelocityX() * GameConstants.PLAYER_SPEED * deltaTime);
         int newY = currentY + (int) (player.getVelocityY() * GameConstants.PLAYER_SPEED * deltaTime);
 
@@ -344,11 +423,11 @@ public class GameEngine {
             newY = GameConstants.SCREEN_HEIGHT - player.getHeight();
         }
 
-        // Smart collision sliding: check X and Y movements independently
+        // Smart collision sliding: check X dan Y movement independently
         boolean canMoveX = true;
         boolean canMoveY = true;
 
-        // Check collision for X movement
+        // Check collision untuk X movement
         for (Amplifier amp : amplifiers) {
             if (newX < amp.getX() + amp.getWidth() &&
                     newX + player.getWidth() > amp.getX() &&
@@ -359,7 +438,7 @@ public class GameEngine {
             }
         }
 
-        // Check collision for Y movement
+        // Check collision untuk Y movement
         for (Amplifier amp : amplifiers) {
             if (currentX < amp.getX() + amp.getWidth() &&
                     currentX + player.getWidth() > amp.getX() &&
@@ -370,7 +449,7 @@ public class GameEngine {
             }
         }
 
-        // Update position based on what's allowed
+        // Update position berdasarkan apa yang diizinkan
         if (canMoveX) {
             player.setX(newX);
         }
@@ -379,6 +458,14 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Handle semua collision di game:
+     * - Player Bullet vs Monster
+     * - Player Bullet vs Amplifier
+     * - Monster Bullet vs Amplifier
+     * - Monster vs Player
+     * - Monster Bullet vs Player
+     */
     private void checkCollisons() {
         // Check Player Bullet vs Monster
         List<Bullet> bulletsToRemove = new ArrayList<>();
@@ -468,10 +555,19 @@ public class GameEngine {
         amplifiers.removeAll(deadAmplifiers);
     }
 
+    /**
+     * Generic AABB collision check antara dua entity
+     * Mendukung Bullet, Monster, dan Player
+     * 
+     * @param obj1 Entity pertama (Bullet/Monster/Player)
+     * @param obj2 Entity kedua (Bullet/Monster/Player)
+     * @return true jika collision, false jika tidak
+     */
     private boolean checkRectangleCollision(Object obj1, Object obj2) {
         int x1, y1, w1, h1;
         int x2, y2, w2, h2;
 
+        // Extract position/size dari obj1
         if (obj1 instanceof Bullet) {
             Bullet b = (Bullet) obj1;
             x1 = b.getX();
@@ -492,6 +588,7 @@ public class GameEngine {
             h1 = p.getHeight();
         }
 
+        // Extract position/size dari obj2
         if (obj2 instanceof Bullet) {
             Bullet b = (Bullet) obj2;
             x2 = b.getX();
@@ -512,9 +609,14 @@ public class GameEngine {
             h2 = p.getHeight();
         }
 
+        // AABB collision detection formula
         return x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
     }
 
+    /**
+     * Player menembak bullet
+     * Spawn bullet dari posisi player ke arah atas
+     */
     public void playerShoot() {
         int centerX = player.getCenterX() + GameConstants.PLAYER_BULLET_SPAWN_OFFSET_X;
         int centerY = player.getCenterY();
@@ -522,13 +624,17 @@ public class GameEngine {
         bulletsFired++;
     }
 
+    /**
+     * Update shooting logic untuk semua monsters
+     * Monster menembak ke arah player dengan normalized direction
+     */
     public void updateMonsterShooting() {
         for (Monster monster : monsters) {
             if (monster.canShoot()) {
                 int centerX = monster.getCenterX();
                 int centerY = monster.getCenterY();
 
-                // Calculate direction from monster to player
+                // Calculate direction dari monster ke player
                 int playerCenterX = player.getCenterX();
                 int playerCenterY = player.getCenterY();
 
@@ -536,7 +642,7 @@ public class GameEngine {
                 double dirY = playerCenterY - centerY;
                 double distance = Math.sqrt(dirX * dirX + dirY * dirY);
 
-                // Normalize direction (smooth lerp)
+                // Normalize direction (smooth tracking)
                 double velocityX = 0;
                 double velocityY = 0;
                 if (distance > 0) {
@@ -544,12 +650,12 @@ public class GameEngine {
                     velocityY = dirY / distance;
                 }
 
-                // Create bullet and set velocity
+                // Create bullet dan set velocity
                 Bullet bullet = new Bullet(centerX, centerY, false);
                 bullet.setVelocity(velocityX, velocityY);
                 bullets.add(bullet);
 
-                // Play monster shoot sound with frequency control (30% chance)
+                // Play monster shoot sound dengan frequency control (30% chance)
                 if (random.nextInt(100) < GameConstants.AUDIO_MONSTER_SHOOT_FREQUENCY) {
                     AudioManager.playMonsterShoot();
                 }
@@ -559,50 +665,103 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Cek apakah game sudah over
+     * 
+     * @return true jika player sudah mati (health <= 0)
+     */
     public boolean isGameOver() {
         return !player.isAlive();
     }
 
-    // Getters
+    // ===================== GETTERS =====================
+
+    /**
+     * Ambil entity player
+     * 
+     * @return Player object
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Ambil list monster aktif
+     * 
+     * @return List monster
+     */
     public List<Monster> getMonsters() {
         return monsters;
     }
 
+    /**
+     * Ambil list bullet aktif
+     * 
+     * @return List bullet
+     */
     public List<Bullet> getBullets() {
         return bullets;
     }
 
+    /**
+     * Ambil list amplifier aktif
+     * 
+     * @return List amplifier
+     */
     public List<Amplifier> getAmplifiers() {
         return amplifiers;
     }
 
+    /**
+     * Ambil score saat ini
+     * 
+     * @return Score
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Ambil jumlah bullet yang sudah ditembak
+     * 
+     * @return Jumlah bullet fired
+     */
     public int getBulletsFired() {
         return bulletsFired;
     }
 
+    /**
+     * Ambil jumlah bullet yang meleset
+     * 
+     * @return Jumlah bullet missed
+     */
     public int getBulletsMissed() {
         return bulletsMissed;
     }
 
+    /**
+     * Ambil username player
+     * 
+     * @return Username
+     */
     public String getCurrentUsername() {
         return currentUsername;
     }
 
+    /**
+     * Ambil wave number saat ini
+     * 
+     * @return Wave number (0-3)
+     */
     public int getCurrentWave() {
         return currentWave;
     }
 
     /**
-     * Check apakah harus tampilkan wave notification
+     * Cek apakah harus tampilkan wave notification
      * Hanya trigger sekali per wave change, dan hanya selama 2 detik
+     * 
+     * @return true jika harus tampilkan notification, false jika tidak
      */
     public boolean shouldShowWaveNotification() {
         long currentTime = System.currentTimeMillis();

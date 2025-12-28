@@ -66,12 +66,26 @@ import riffOrDie.presenter.AudioManager;
  * 4. Save score ke database saat game over
  */
 public class GamePresenter implements IGamePresenter {
+    /** Reference ke view (GamePanel) */
     private IGameView view;
+    
+    /** Model yang hold semua game state */
     private GameEngine gameEngine;
+    
+    /** Username player */
     private String username;
+    
+    /** Ammo awal (dari previous session) */
     private int startingSisaPeluru;
+    
+    /** Flag game over state */
     private boolean gameOver;
 
+    /**
+     * Constructor - Inisialisasi presenter dengan view
+     * 
+     * @param view Reference ke IGameView (GamePanel)
+     */
     public GamePresenter(IGameView view) {
         this.view = view;
         this.gameEngine = null;
@@ -81,6 +95,9 @@ public class GamePresenter implements IGamePresenter {
 
     /**
      * Start game dengan username dan sisa peluru dari game sebelumnya
+     * 
+     * @param username Nama pemain
+     * @param sisaPeluru Ammo sisa dari session sebelumnya
      */
     @Override
     public void startGame(String username, int sisaPeluru) {
@@ -91,7 +108,7 @@ public class GamePresenter implements IGamePresenter {
         this.gameEngine = new GameEngine(username, sisaPeluru);
         this.gameOver = false;
 
-        // Load ammo from database or set to 0
+        // Load ammo dari database atau set ke 0
         gameEngine.getPlayer().setAmmo(sisaPeluru);
 
         // Notify view bahwa game sudah dimulai
@@ -101,6 +118,9 @@ public class GamePresenter implements IGamePresenter {
     /**
      * Handle player movement
      * Direction values: -1 (left/up), 0 (no movement), 1 (right/down)
+     * 
+     * @param directionX Direction horizontal (-1, 0, 1)
+     * @param directionY Direction vertical (-1, 0, 1)
      */
     @Override
     public void playerMove(int directionX, int directionY) {
@@ -114,6 +134,7 @@ public class GamePresenter implements IGamePresenter {
 
     /**
      * Handle player shoot
+     * Hanya shoot jika ammo > 0
      */
     @Override
     public void playerShoot() {
@@ -133,6 +154,8 @@ public class GamePresenter implements IGamePresenter {
      * Update game state setiap frame
      * Called oleh GamePanel di game loop
      * Ini adalah method paling sering dipanggil
+     * 
+     * @param deltaTime Delta time (detik) sejak frame terakhir
      */
     @Override
     public void update(double deltaTime) {
@@ -191,7 +214,7 @@ public class GamePresenter implements IGamePresenter {
 
         gameOver = true;
 
-        // Create GameScore object with current ammo
+        // Create GameScore object dengan current ammo
         GameScore gameScore = new GameScore();
         gameScore.setUsername(username);
         gameScore.setSkor(gameEngine.getScore());
@@ -213,6 +236,8 @@ public class GamePresenter implements IGamePresenter {
 
     /**
      * Check apakah game sudah over
+     * 
+     * @return true jika game over, false jika masih berjalan
      */
     @Override
     public boolean isGameOver() {
@@ -221,6 +246,8 @@ public class GamePresenter implements IGamePresenter {
 
     /**
      * Get current game score
+     * 
+     * @return Score saat ini, 0 jika game belum dimulai
      */
     @Override
     public int getScore() {
@@ -229,6 +256,8 @@ public class GamePresenter implements IGamePresenter {
 
     /**
      * Get game engine (untuk testing/debugging)
+     * 
+     * @return GameEngine instance
      */
     public GameEngine getGameEngine() {
         return gameEngine;
@@ -244,7 +273,7 @@ public class GamePresenter implements IGamePresenter {
             return;
         }
 
-        // Save score before returning with current ammo
+        // Save score before returning dengan current ammo
         GameScore gameScore = new GameScore();
         gameScore.setUsername(username);
         gameScore.setSkor(gameEngine.getScore());

@@ -16,10 +16,19 @@ import riffOrDie.presenter.MenuPresenter;
 import riffOrDie.config.GameConstants;
 
 public class GameFrame extends JFrame {
+    /** Menu panel reference */
     private MenuPanel menuPanel;
+    
+    /** Game panel reference */
     private GamePanel gamePanel;
+    
+    /** Menu presenter reference */
     private MenuPresenter menuPresenter;
 
+    /**
+     * Constructor - Inisialisasi main window
+     * Setup JFrame properties dan tampilkan menu panel
+     */
     public GameFrame() {
         setTitle("Riff or Die");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -28,9 +37,14 @@ public class GameFrame extends JFrame {
 
         setSize(GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT);
 
+        // Tampilkan menu panel saat startup
         showMenuPanel();
     }
 
+    /**
+     * Tampilkan menu panel (main menu)
+     * Hapus game panel jika ada, create menu panel baru
+     */
     public void showMenuPanel() {
         if (gamePanel != null) {
             remove(gamePanel);
@@ -44,6 +58,13 @@ public class GameFrame extends JFrame {
         repaint();
     }
 
+    /**
+     * Tampilkan game panel dengan username dan ammo awal
+     * Hapus menu panel jika ada, create game panel baru
+     * 
+     * @param username Username player
+     * @param sisaPeluru Ammo awal (dari previous session)
+     */
     public void showGamePanel(String username, int sisaPeluru) {
         if (menuPanel != null) {
             remove(menuPanel);
@@ -52,12 +73,17 @@ public class GameFrame extends JFrame {
         gamePanel = new GamePanel(this, username, sisaPeluru);
         add(gamePanel);
 
+        // Request focus untuk keyboard input
         gamePanel.requestFocusInWindow();
 
         revalidate();
         repaint();
     }
 
+    /**
+     * Kembali ke menu panel
+     * Stop game loop, hapus game panel, tampilkan menu lagi
+     */
     public void backToMenu() {
         if (gamePanel != null) {
             gamePanel.stopGame();

@@ -22,8 +22,13 @@ import java.awt.RenderingHints;
  * corner radius
  */
 public class RoundedPanel extends JPanel {
+    /** Ukuran radius corners (pixel) */
     private int cornerRadius;
+    
+    /** Warna border */
     private Color borderColor;
+    
+    /** Ketebalan border (pixel) */
     private int borderThickness;
 
     /**
@@ -40,6 +45,11 @@ public class RoundedPanel extends JPanel {
         setOpaque(false); // Transparent background untuk show rounded corners
     }
 
+    /**
+     * Override paintComponent untuk draw rounded panel
+     * 
+     * @param g Graphics context
+     */
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;

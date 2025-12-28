@@ -53,9 +53,18 @@ import riffOrDie.model.GameScore;
 import riffOrDie.view.MenuPanel;
 
 public class MenuPresenter implements IMenuPresenter {
+    /** Reference ke IMenuView (MenuPanel) */
     private IMenuView view;
+    
+    /** Reference ke MenuPanel untuk navigasi */
     private MenuPanel menuPanel;
 
+    /**
+     * Constructor - Inisialisasi presenter dengan view
+     * 
+     * @param view Reference ke IMenuView
+     * @param menuPanel Reference ke MenuPanel untuk navigateToGame
+     */
     public MenuPresenter(IMenuView view, MenuPanel menuPanel) {
         this.view = view;
         this.menuPanel = menuPanel;
@@ -83,6 +92,8 @@ public class MenuPresenter implements IMenuPresenter {
      * Validation: Check username tidak empty
      * Look up: Query database untuk existing score + sisa peluru
      * Navigate: Start game dengan player name
+     * 
+     * @param username Username yang diinput user
      */
     @Override
     public void onPlayClicked(String username) {

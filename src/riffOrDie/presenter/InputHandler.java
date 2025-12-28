@@ -44,14 +44,29 @@ import java.awt.event.KeyListener;
 import riffOrDie.presenter.IGamePresenter;
 
 public class InputHandler implements KeyListener {
+    /** Reference ke GamePresenter */
     private IGamePresenter presenter;
+    
+    /** Direction horizontal (-1, 0, 1) */
     private int directionX = 0;
+    
+    /** Direction vertical (-1, 0, 1) */
     private int directionY = 0;
 
+    /**
+     * Constructor - Inisialisasi input handler dengan presenter
+     * 
+     * @param presenter Reference ke IGamePresenter
+     */
     public InputHandler(IGamePresenter presenter) {
         this.presenter = presenter;
     }
 
+    /**
+     * Dipanggil saat tombol keyboard ditekan
+     * 
+     * @param e KeyEvent yang berisi informasi tombol
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
@@ -86,6 +101,11 @@ public class InputHandler implements KeyListener {
         }
     }
 
+    /**
+     * Dipanggil saat tombol keyboard dilepas
+     * 
+     * @param e KeyEvent yang berisi informasi tombol
+     */
     @Override
     public void keyReleased(KeyEvent e) {
         int keyCode = e.getKeyCode();
@@ -102,6 +122,12 @@ public class InputHandler implements KeyListener {
         presenter.playerMove(directionX, directionY);
     }
 
+    /**
+     * Tidak digunakan
+     * Dipanggil saat character diketik (untuk text input)
+     * 
+     * @param e KeyEvent
+     */
     @Override
     public void keyTyped(KeyEvent e) {
         // Not used

@@ -43,31 +43,73 @@ import riffOrDie.config.GameConstants;
  * Semua logic ada di GamePresenter
  */
 public class GamePanel extends JPanel implements IGameView, Runnable {
+    /** Reference ke main window frame */
     private GameFrame gameFrame;
+    
+    /** Reference ke presenter (MVP pattern) */
     private IGamePresenter presenter;
+    
+    /** Input handler untuk keyboard */
     private InputHandler inputHandler;
 
-    // Game state untuk rendering (diupdate oleh presenter)
+    // ===================== GAME STATE UNTUK RENDERING =====================
+    
+    /** Player entity */
     private Player player;
+    
+    /** List monster aktif */
     private List<Monster> monsters;
+    
+    /** List bullet aktif */
     private List<Bullet> bullets;
+    
+    /** List amplifier aktif */
     private List<Amplifier> amplifiers;
+    
+    /** Score saat ini */
     private int score;
+    
+    /** Health player saat ini */
     private int health;
+    
+    /** Ammo saat ini */
     private int currentAmmo = 0;
+    
+    /** Jumlah bullet yang meleset */
     private int bulletsMissed = 0;
+    
+    /** Wave number saat ini */
     private int currentWave = 0;
+    
+    /** Wave yang sedang dinotifikasi */
     private int notificationWave = -1;
+    
+    /** Waktu notification mulai (ms) */
     private long notificationStartTime = 0;
+    
+    /** Flag notification aktif */
     private boolean isNotificationActive = false;
 
+    // ===================== GAME LOOP =====================
+    
+    /** Thread untuk game loop */
     private Thread gameThread;
+    
+    /** Flag game sedang running */
     private volatile boolean isRunning;
 
+    /**
+     * Constructor - Inisialisasi game panel
+     * 
+     * @param gameFrame Reference ke main window
+     * @param username Username player
+     * @param sisaPeluru Ammo awal
+     */
     public GamePanel(GameFrame gameFrame, String username, int sisaPeluru) {
         this.gameFrame = gameFrame;
         this.isRunning = true;
 
+        // Setup panel background
         setBackground(new java.awt.Color(30, 30, 30));
         setFocusable(true);
 
@@ -90,6 +132,11 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         gameThread.start();
     }
 
+    /**
+     * Main game loop - dipanggil di thread terpisah
+     * Menghandle update dan rendering setiap frame
+     * Target: 60 FPS (~16ms per frame)
+     */
     @Override
     public void run() {
         long lastFrameTime = System.currentTimeMillis();
@@ -102,8 +149,10 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
             // Update game state melalui presenter
             presenter.update(deltaTime);
 
+            // Render frame
             repaint();
 
+            // Cap framerate ke 60 FPS
             try {
                 long sleepTime = GameConstants.FRAME_TIME - deltaTimeMs;
                 if (sleepTime > 0) {
@@ -121,13 +170,19 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         // Game over dialog already handled by showGameOverDialog() method
     }
 
+    /**
+     * Render method - dipanggil oleh Swing EDT
+     * Draw semua game elements ke screen
+     * 
+     * @param g Graphics context
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // Call GameRenderer dengan player, monsters, bullets, amplifiers
-        // Copy lists to prevent ConcurrentModificationException
+        // Call GameRenderer dengan semua entities
+        // Copy lists untuk prevent ConcurrentModificationException
         if (amplifiers != null) {
             GameRenderer.drawAmplifiersStatic(g2d, new java.util.ArrayList<>(amplifiers));
         }
@@ -141,9 +196,15 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
             GameRenderer.drawPlayerStatic(g2d, player);
         }
 
+        // Draw UI HUD
         drawUI(g2d);
     }
 
+    /**
+     * Draw UI elements (score, health, ammo, wave, notification)
+     * 
+     * @param g2d Graphics2D context
+     */
     private void drawUI(Graphics2D g2d) {
         g2d.setColor(java.awt.Color.WHITE);
         g2d.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 14));
@@ -154,7 +215,7 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         // Draw health
         g2d.drawString("Health: " + health, 10, 40);
 
-        // Draw ammo (with missed count)
+        // Draw ammo (dengan missed count)
         GameRenderer.drawAmmo(g2d, currentAmmo, bulletsMissed, 10, 60);
 
         // Draw enemies count (kanan atas)
@@ -198,6 +259,10 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         }
     }
 
+    /**
+     * Stop game loop
+     * Dipanggil saat game over atau switch ke menu
+     */
     public void stopGame() {
         isRunning = false;
         try {
@@ -209,41 +274,77 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         }
     }
 
-    /**
-     * IGameView Implementation Methods
-     */
+    // ===================== IGAMEVIEW IMPLEMENTATION =====================
 
+    /**
+     * Set presenter reference
+     * 
+     * @param presenter IGamePresenter instance
+     */
     @Override
     public void setPresenter(IGamePresenter presenter) {
         this.presenter = presenter;
     }
 
+    /**
+     * Update score display
+     * 
+     * @param score Score baru
+     */
     @Override
     public void updateScore(int score) {
         this.score = score;
     }
 
+    /**
+     * Update health display
+     * 
+     * @param health Health baru
+     */
     @Override
     public void updateHealth(int health) {
         this.health = health;
     }
 
+    /**
+     * Update bullets fired display
+     * Optional: display bullets fired info
+     * 
+     * @param bulletsFired Jumlah bullet yang sudah ditembak
+     */
     @Override
     public void updateBulletsFired(int bulletsFired) {
         // Optional: display bullets fired info
     }
 
+    /**
+     * Update ammo display
+     * 
+     * @param ammoCount Jumlah ammo saat ini
+     * @param bulletsMissed Jumlah bullet meleset
+     */
     @Override
     public void updateAmmo(int ammoCount, int bulletsMissed) {
         this.currentAmmo = ammoCount;
         this.bulletsMissed = bulletsMissed;
     }
 
+    /**
+     * Update wave display
+     * 
+     * @param waveNumber Wave number baru
+     */
     @Override
     public void updateWave(int waveNumber) {
         this.currentWave = waveNumber;
     }
 
+    /**
+     * Show wave notification
+     * Trigger fade in/out animation
+     * 
+     * @param waveNumber Wave yang akan muncul
+     */
     @Override
     public void showWaveNotification(int waveNumber) {
         this.notificationWave = waveNumber;
@@ -251,25 +352,51 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         this.isNotificationActive = true;
     }
 
+    /**
+     * Update monsters untuk rendering
+     * 
+     * @param monsters List monster baru
+     */
     public void updateMonsters(List<Monster> monsters) {
         this.monsters = monsters;
     }
 
+    /**
+     * Update bullets untuk rendering
+     * 
+     * @param bullets List bullet baru
+     */
     @Override
     public void updateBullets(List<Bullet> bullets) {
         this.bullets = bullets;
     }
 
+    /**
+     * Update player untuk rendering
+     * 
+     * @param player Player entity baru
+     */
     @Override
     public void updatePlayer(Player player) {
         this.player = player;
     }
 
+    /**
+     * Update amplifiers untuk rendering
+     * 
+     * @param amplifiers List amplifier baru
+     */
     @Override
     public void updateAmplifiers(List<Amplifier> amplifiers) {
         this.amplifiers = amplifiers;
     }
 
+    /**
+     * Show game over dialog
+     * Stop game, stop music, show dialog, return to menu
+     * 
+     * @param finalScore Score akhir game
+     */
     @Override
     public void showGameOverDialog(int finalScore) {
         // Stop game loop
@@ -277,9 +404,7 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
 
         // Stop background music
         AudioManager.stopBackgroundMusic();
-        // Stop background music
-        AudioManager.stopBackgroundMusic();
-
+        
         // Show blocking JOptionPane dialog
         JOptionPane.showMessageDialog(
                 this,
@@ -291,6 +416,10 @@ public class GamePanel extends JPanel implements IGameView, Runnable {
         gameFrame.backToMenu();
     }
 
+    /**
+     * Repaint game canvas
+     * Dipanggil saat ada perubahan visual
+     */
     @Override
     public void repaintGame() {
         repaint();

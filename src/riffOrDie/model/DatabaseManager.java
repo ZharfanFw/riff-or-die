@@ -29,6 +29,10 @@ import riffOrDie.config.DatabaseConfig;
  */
 public class DatabaseManager {
 
+    /**
+     * Static block - Load MySQL Driver saat class pertama kali dimuat
+     * Penting untuk register JDBC driver sebelum koneksi
+     */
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -40,7 +44,12 @@ public class DatabaseManager {
 
     /**
      * Get fresh database connection
-     * JANGAN di-close dalam try-with-resources
+     * Membuka koneksi baru ke database MySQL
+     * 
+     * @return Connection object yang aktif
+     * @throws SQLException Jika koneksi gagal
+     * 
+     * PENTING: JANGAN di-close dalam try-with-resources
      */
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
@@ -49,7 +58,16 @@ public class DatabaseManager {
                 DatabaseConfig.DB_PASSWORD);
     }
 
+    /**
+     * Simpan score player ke database
+     * Jika user sudah ada: UPDATE data
+     * Jika user belum ada: INSERT data baru
+     * 
+     * @param score GameScore object yang akan disimpan
+     * @return true jika berhasil, false jika gagal
+     */
     public static boolean saveScore(GameScore score) {
+        // Validasi input
         if (score == null || score.getUsername().isEmpty()) {
             System.err.println("Invalid GameScore! username tidak boleh kosong");
             return false;
@@ -60,6 +78,7 @@ public class DatabaseManager {
             conn = getConnection();
 
             if (userExists(score.getUsername())) {
+                // User sudah ada - UPDATE existing record
                 String updateSQL = "UPDATE " + DatabaseConfig.DB_TABLE +
                         " SET " + DatabaseConfig.COL_SKOR + " = ?, " +
                         DatabaseConfig.COL_PELURU_MELESET + " = ?, " +
@@ -76,6 +95,7 @@ public class DatabaseManager {
                     return rowsAffected > 0;
                 }
             } else {
+                // User belum ada - INSERT new record
                 String insertSQL = "INSERT INTO " + DatabaseConfig.DB_TABLE +
                         " (" + DatabaseConfig.COL_USERNAME + ", " +
                         DatabaseConfig.COL_SKOR + ", " +
@@ -98,6 +118,7 @@ public class DatabaseManager {
             e.printStackTrace();
             return false;
         } finally {
+            // Close connection di finally block
             try {
                 if (conn != null && !conn.isClosed()) {
                     conn.close();
@@ -108,7 +129,14 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Ambil data score player tertentu dari database
+     * 
+     * @param username Username player yang dicari
+     * @return GameScore object jika ditemukan, null jika tidak
+     */
     public static GameScore getPlayerScore(String username) {
+        // Validasi input
         if (username == null || username.isEmpty()) {
             System.err.println("Username tidak boleh kosong");
             return null;
@@ -150,6 +178,12 @@ public class DatabaseManager {
         return null;
     }
 
+    /**
+     * Ambil semua data score dari database untuk scoreboard
+     * Data diurutkan berdasarkan skor (descending)
+     * 
+     * @return List<GameScore> berisi semua skor, kosong jika gagal
+     */
     public static List<GameScore> getAllScores() {
         List<GameScore> scores = new ArrayList<>();
 
@@ -186,6 +220,13 @@ public class DatabaseManager {
         return scores;
     }
 
+    /**
+     * Cek apakah user sudah ada di database
+     * Method private, hanya digunakan secara internal oleh saveScore()
+     * 
+     * @param username Username yang dicek
+     * @return true jika user sudah ada, false jika belum
+     */
     private static boolean userExists(String username) {
         String selectSQL = "SELECT COUNT(*) FROM " + DatabaseConfig.DB_TABLE +
                 " WHERE " + DatabaseConfig.COL_USERNAME + " = ?";

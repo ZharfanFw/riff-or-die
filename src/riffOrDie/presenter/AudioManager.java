@@ -55,20 +55,39 @@ import java.io.File;
  * Interrupt-based playback untuk amplifier hit sound
  */
 public class AudioManager {
+    /** Clip untuk sound efek player menembak */
     private static Clip playerShootClip;
+    
+    /** Clip untuk sound efek monster menembak */
     private static Clip monsterShootClip;
+    
+    /** Clip untuk sound efek monster kena tembak */
     private static Clip monsterHitClip;
+    
+    /** Clip untuk sound efek amplifier kena tembak */
     private static Clip amplifierHitClip;
+    
+    /** Clip untuk background music */
     private static Clip backgroundMusicClip;
 
+    /** Volume player shoot (0.0 - 1.0) */
     private static float playerShootVolume = 1.0f;
+    
+    /** Volume monster shoot (0.0 - 1.0) */
     private static float monsterShootVolume = 0.6f;
+    
+    /** Volume monster hit (0.0 - 1.0) */
     private static float monsterHitVolume = 0.7f;
+    
+    /** Volume amplifier hit (0.0 - 1.0) */
     private static float amplifierHitVolume = 0.8f;
+    
+    /** Volume background music (0.0 - 1.0) */
     private static float backgroundMusicVolume = 0.4f;
 
     /**
      * Initialize dan load semua audio files
+     * Dipanggil sekali saat game startup
      */
     public static void initialize() {
         try {
@@ -87,6 +106,10 @@ public class AudioManager {
 
     /**
      * Load audio file sebagai Clip
+     * 
+     * @param filePath Path ke file audio WAV
+     * @return Clip yang sudah di-load dan siap dimainkan
+     * @throws Exception Jika file tidak ditemukan atau format tidak support
      */
     private static Clip loadAudioClip(String filePath) throws Exception {
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
@@ -96,8 +119,7 @@ public class AudioManager {
     }
 
     /**
-     * Play player shoot sound effect (overlap-based: multiple sounds can play
-     * simultaneously)
+     * Play player shoot sound effect (overlap-based: multiple sounds can play simultaneously)
      */
     public static void playPlayerShoot() {
         playClip(playerShootClip, playerShootVolume);
@@ -111,16 +133,14 @@ public class AudioManager {
     }
 
     /**
-     * Play monster hit sound effect (overlap-based: multiple sounds can play
-     * simultaneously)
+     * Play monster hit sound effect (overlap-based: multiple sounds can play simultaneously)
      */
     public static void playMonsterHit() {
         playClip(monsterHitClip, monsterHitVolume);
     }
 
     /**
-     * Play amplifier hit sound effect (interrupt-based: stops previous sound and
-     * restarts)
+     * Play amplifier hit sound effect (interrupt-based: stops previous sound and restarts)
      */
     public static void playAmplifierHit() {
         playClipWithInterrupt(amplifierHitClip, amplifierHitVolume);
@@ -128,6 +148,7 @@ public class AudioManager {
 
     /**
      * Play background music dengan looping
+     * Musik akan berputar terus-menerus selama gameplay
      */
     public static void playBackgroundMusic() {
         if (backgroundMusicClip != null) {
@@ -139,6 +160,7 @@ public class AudioManager {
 
     /**
      * Stop background music
+     * Dipanggil saat game over atau switch ke menu
      */
     public static void stopBackgroundMusic() {
         if (backgroundMusicClip != null && backgroundMusicClip.isRunning()) {
@@ -148,9 +170,12 @@ public class AudioManager {
 
     /**
      * Play clip (SFX) tanpa looping - overlap-based behavior
-     * Used by sounds that should allow multiple instances to play (player bullet,
+     * Used by sounds yang harus allow multiple instances to play (player bullet,
      * monster shoot, monster hit)
      * Multiple triggers = multiple sounds playing simultaneously
+     * 
+     * @param clip Clip yang akan dimainkan
+     * @param volume Volume (0.0 - 1.0)
      */
     private static void playClip(Clip clip, float volume) {
         if (clip != null) {
@@ -167,8 +192,10 @@ public class AudioManager {
     /**
      * Play clip dengan interrupt - stops and restarts sound jika already playing
      * Used by sounds yang ingin interrupt behavior (amplifier hit only)
-     * Saat di-trigger ulang sebelum sound selesai → stop sound lama + restart dari
-     * frame 0
+     * Saat di-trigger ulang sebelum sound selesai → stop sound lama + restart dari frame 0
+     * 
+     * @param clip Clip yang akan dimainkan
+     * @param volume Volume (0.0 - 1.0)
      */
     private static void playClipWithInterrupt(Clip clip, float volume) {
         if (clip != null) {
@@ -196,6 +223,10 @@ public class AudioManager {
      * Get first available FloatControl from clip (smart fallback)
      * Try MASTER_GAIN first, fallback to VOLUME if unavailable
      * Return null if no control available (graceful degradation)
+     * 
+     * @param clip Clip yang dicek
+     * @param types Array control types yang ingin dicek (prioritized)
+     * @return FloatControl yang tersedia, atau null jika tidak ada
      */
     private static FloatControl getAvailableControl(Clip clip, Control.Type... types) {
         if (clip == null)
@@ -214,6 +245,9 @@ public class AudioManager {
      * Set volume untuk clip (0.0 = mute, 1.0 = max)
      * Smart fallback: try MASTER_GAIN first, fallback to VOLUME
      * If no control available, audio still plays at system volume
+     * 
+     * @param clip Clip yang akan diset volumenya
+     * @param volume Volume (0.0 - 1.0)
      */
     private static void setVolume(Clip clip, float volume) {
         if (clip == null)
@@ -238,30 +272,53 @@ public class AudioManager {
     }
 
     /**
-     * Set volume untuk sound effects
+     * Set volume untuk sound effect player shoot
+     * 
+     * @param volume Volume (0.0 - 1.0)
      */
     public static void setPlayerShootVolume(float volume) {
         playerShootVolume = Math.max(0, Math.min(volume, 1.0f));
     }
 
+    /**
+     * Set volume untuk sound effect monster shoot
+     * 
+     * @param volume Volume (0.0 - 1.0)
+     */
     public static void setMonsterShootVolume(float volume) {
         monsterShootVolume = Math.max(0, Math.min(volume, 1.0f));
     }
 
+    /**
+     * Set volume untuk sound effect monster hit
+     * 
+     * @param volume Volume (0.0 - 1.0)
+     */
     public static void setMonsterHitVolume(float volume) {
         monsterHitVolume = Math.max(0, Math.min(volume, 1.0f));
     }
 
+    /**
+     * Set volume untuk sound effect amplifier hit
+     * 
+     * @param volume Volume (0.0 - 1.0)
+     */
     public static void setAmplifierHitVolume(float volume) {
         amplifierHitVolume = Math.max(0, Math.min(volume, 1.0f));
     }
 
+    /**
+     * Set volume untuk background music
+     * 
+     * @param volume Volume (0.0 - 1.0)
+     */
     public static void setBackgroundMusicVolume(float volume) {
         backgroundMusicVolume = Math.max(0, Math.min(volume, 1.0f));
     }
 
     /**
      * Cleanup resources
+     * Dipanggil saat aplikasi akan tutup
      */
     public static void shutdown() {
         stopBackgroundMusic();
